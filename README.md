@@ -71,6 +71,24 @@ npm run g-presentation 2.1
 
 The script (`presentations/presentation-generator/generate.js`) reads the Markdown file for the given section from `presentations/<section>/<section>.md`, renders it to HTML using the template in `presentations/presentation-generator/template.html`, and produces a PDF using Puppeteer.
 
+### Presentation prompt and generated Markdown
+
+You can generate the Markdown presentation for a new section using the repository prompt defined at `.github/prompts/generate-presentation.prompt.md`. In editors that support repository prompts (for example, VS Code with GitHub Copilot or Cursor), invoke the prompt with the section identifier to create or replace the presentation source file at `presentations/<SECTION>/<SECTION>.md` (the prompt will create the folder if needed).
+
+Example (in a supported editor):
+
+```text
+/generate-presentation 5.2
+```
+
+After the Markdown file is created or edited, render HTML and PDF with:
+
+```bash
+npm run g-presentation <section>
+```
+
+This will read `presentations/<section>/<section>.md` and produce `presentations/<section>/<section>.html` and `presentations/<section>/<section>.pdf`.
+
 ---
 
 ## Generating a PDF
