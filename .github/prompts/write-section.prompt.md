@@ -9,7 +9,7 @@ Prepare the theory and practical exercise topics for a section of the learning p
 
 ## Table of contents
 
-Read the table of contents stored in [contents](../../contents.txt).
+Read the table of contents stored in [contents](../../sections/contents.txt).
 
 Expected format: each line contains a section number and title, e.g. `2.1 — Section title` or `2.1. Section title`. If the format differs, try to recognise the section number at the beginning of the line.
 

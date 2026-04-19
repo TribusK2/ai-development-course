@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prezentacja</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --accent: #6C47FF;
+  --accent-light: #EDE9FF;
+  --accent-mid: #8B6AFF;
+  --dark: #1A1A2E;
+  --text: #2D2D3A;
+  --text-muted: #6B6B8A;
+  --border: #E5E5F0;
+  --surface: #F8F8FC;
+  --code-bg: #F0EEFF;
+  --code-border: #C4B5FF;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+@page {
+  size: A4 landscape;
+  margin: 0;
+}
+
+section.slide {
+  display: block;
+  width: 297mm;
+  height: 210mm;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 14mm 20mm;
+  page-break-before: always;
+  break-before: page;
+  page-break-after: always;
+  break-after: page;
+  background: #ffffff;
+  position: relative;
+  color: var(--text);
+  font-size: 11pt;
+  line-height: 1.6;
+}
+
+section.slide:first-child {
+  page-break-before: avoid;
+  break-before: avoid;
+}
+
+/* Accent top bar */
+section.slide::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-mid) 60%, #C4B5FF 100%);
+}
+
+/* ─── Headings ───────────────────────────────────────────────────── */
+section.slide h1 {
+  font-size: 24pt;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 0 0 6mm 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  border-bottom: 2px solid var(--accent-light);
+  padding-bottom: 4mm;
+}
+
+section.slide h2 {
+  font-size: 17pt;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0 0 5mm 0;
+  line-height: 1.2;
+  padding-left: 4mm;
+  border-left: 4px solid var(--accent);
+}
+
+section.slide h3 {
+  font-size: 13pt;
+  font-weight: 600;
+  color: var(--dark);
+  margin: 4mm 0 2mm 0;
+}
+
+section.slide h4 {
+  font-size: 11pt;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 3mm 0 1.5mm 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─── Paragraphs ─────────────────────────────────────────────────── */
+section.slide p {
+  margin: 0 0 3mm 0;
+  font-size: 10.5pt;
+  color: var(--text);
+}
+
+/* ─── Lists ──────────────────────────────────────────────────────── */
+section.slide ul,
+section.slide ol {
+  margin: 0 0 3mm 0;
+  padding-left: 6mm;
+}
+
+section.slide ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+section.slide ul li {
+  position: relative;
+  padding-left: 7mm;
+  margin-bottom: 2mm;
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+
+section.slide ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+section.slide ol li {
+  margin-bottom: 2mm;
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+
+section.slide ul li ul li::before {
+  background: var(--accent-mid);
+  width: 4px;
+  height: 4px;
+}
+
+/* ─── Code ───────────────────────────────────────────────────────── */
+section.slide code {
+  font-family: 'Fira Mono', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 9.5pt;
+  background: var(--code-bg);
+  color: var(--accent);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+section.slide pre {
+  background: var(--code-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 4mm 5mm;
+  margin: 3mm 0;
+  overflow: hidden;
+}
+
+section.slide pre code {
+  background: transparent;
+  padding: 0;
+  color: var(--dark);
+  font-size: 9pt;
+  line-height: 1.5;
+}
+
+/* ─── Tables ─────────────────────────────────────────────────────── */
+section.slide table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 3mm 0;
+  font-size: 9.5pt;
+}
+
+section.slide th {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  padding: 2mm 4mm;
+  text-align: left;
+  letter-spacing: 0.02em;
+}
+
+section.slide td {
+  padding: 2mm 4mm;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: top;
+}
+
+section.slide tr:nth-child(even) td {
+  background: var(--surface);
+}
+
+/* ─── Blockquote ─────────────────────────────────────────────────── */
+section.slide blockquote {
+  border-left: 4px solid var(--accent-mid);
+  background: var(--accent-light);
+  margin: 3mm 0;
+  padding: 3mm 5mm;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+  color: var(--dark);
+  font-size: 10pt;
+}
+
+/* ─── Strong / em ─────────────────────────────────────────────────── */
+section.slide strong {
+  font-weight: 700;
+  color: var(--dark);
+}
+
+section.slide em {
+  color: var(--text-muted);
+}
+
+/* ─── Horizontal rule (slide separator visual, hidden) ───────────── */
+section.slide hr {
+  display: none;
+}
+
+</style>
+</head>
+<body>
+<section class="slide">
+<h1>1.2 Przegląd modeli: GPT-4o, Claude 3.5 Sonnet i modele lokalne (Llama 3)</h1>
+<p><strong>Moduł 1: Fundamenty i Mechanizmy LLM</strong></p>
+
+</section>
+<section class="slide">
+<h2>Krajobraz modeli językowych — orientacja w terenie</h2>
+<p>Świat dużych modeli językowych (LLM) zmienia się w zawrotnym tempie — nowe wersje i nowi gracze pojawiają się co kilka miesięcy.</p>
+<p>Dla AI developera kluczowe jest nie tyle śledzenie każdego benchmarku, co <strong>rozumienie osi decyzyjnych</strong>:</p>
+<ul>
+<li>Kiedy sięgnąć po GPT-4o?</li>
+<li>Kiedy wybrać Claude 3.5 Sonnet?</li>
+<li>Kiedy uruchomić model lokalnie na własnym sprzęcie?</li>
+</ul>
+<p>Decyzja zależy od kontekstu projektu — chatbot dla korporacji wymaga innych modeli niż badacz eksperymentujący na laptopie.</p>
+
+</section>
+<section class="slide">
+<h2>Osie decyzyjne przy wyborze modelu</h2>
+<p>Modele językowe można klasyfikować według czterech kluczowych kryteriów:</p>
+<ul>
+<li><strong>Dostęp:</strong> API w chmurze (OpenAI, Anthropic, Google) vs. modele open-weight uruchamiane lokalnie (Llama, Mistral, Phi)</li>
+<li><strong>Rozmiar:</strong> mierzony liczbą parametrów — od kilku miliardów (7B, 8B) do setek miliardów i powyżej</li>
+<li><strong>Specjalizacja:</strong> modele ogólne vs. wyspecjalizowane (kod, matematyka, medycyna)</li>
+<li><strong>Koszt licencji:</strong> modele komercyjne z zamkniętymi wagami vs. modele open-weight dopuszczające lokalne wdrożenia</li>
+</ul>
+<p>Każda z tych osi ma bezpośrednie przełożenie na wybór modelu w projekcie.</p>
+
+</section>
+<section class="slide">
+<h2>GPT-4o — multimodalny model flagowy OpenAI</h2>
+<p><strong>GPT-4o</strong> (gdzie „o&quot; oznacza <em>omni</em>) to model OpenAI łączący rozumienie tekstu, obrazów i dźwięku w jednym modelu end-to-end.</p>
+<p><strong>Mocne strony GPT-4o:</strong></p>
+<ul>
+<li>Wyjątkowo dobre rozumienie poleceń złożonych i wieloetapowych zadań</li>
+<li>Natywna obsługa obrazów — analiza zrzutów ekranu, diagramów i kodu w formie zdjęć</li>
+<li>Bardzo duże okno kontekstowe: <strong>128 000 tokenów</strong></li>
+<li>Doskonała integracja z ekosystemem OpenAI: Assistants API, function calling, batch processing</li>
+<li>Wbudowane narzędzia: generowanie kodu z uruchamianiem w sandboxie oraz wyszukiwanie w sieci</li>
+</ul>
+
+</section>
+<section class="slide">
+<h2>GPT-4o — ograniczenia i kiedy wybrać</h2>
+<p><strong>Słabsze strony i ograniczenia:</strong></p>
+<ul>
+<li>Model z zamkniętymi wagami — brak możliwości lokalnego uruchomienia ani fine-tuningu poza API</li>
+<li>Koszty wywołań mogą rosnąć szybko przy dużej skali (choć koszt tokenów systematycznie spada)</li>
+<li>Brak pełnej transparentności co do architektury i danych treningowych</li>
+</ul>
+<p><strong>Kiedy wybrać GPT-4o:</strong></p>
+<ul>
+<li>Produkcyjne aplikacje wymagające wysokiej niezawodności</li>
+<li>Złożone zadania rozumowania wielokrokowego</li>
+<li>Projekty wykorzystujące multimodalność (obraz + tekst + dźwięk)</li>
+<li>Integracja z istniejącym ekosystemem OpenAI</li>
+</ul>
+
+</section>
+<section class="slide">
+<h2>Claude 3.5 Sonnet — model Anthropic</h2>
+<p><strong>Claude 3.5 Sonnet</strong> to model firmy Anthropic, wyróżniający się właściwościami istotnymi dla zastosowań biznesowych i deweloperskich.</p>
+<p><strong>Kluczowe cechy Claude 3.5 Sonnet:</strong></p>
+<ul>
+<li><strong>Bardzo duże okno kontekstowe</strong> — do <strong>200 000 tokenów</strong>, umożliwiające analizę całych repozytoriów kodu lub długich dokumentów prawnych w jednym wywołaniu</li>
+<li><strong>Wyjątkowa jakość generowania kodu</strong> — w benchmarku SWE-bench Claude 3.5 Sonnet osiągał najlepsze wyniki spośród komercyjnych modeli</li>
+<li><strong>Bardzo dobre rozumienie długich instrukcji</strong> — model rzadziej „gubi&quot; kontekst z początku długiego promptu</li>
+<li>Większa przewidywalność i mniejsza skłonność do halucynacji (wymyślania nieprawdziwych faktów)</li>
+</ul>
+
+</section>
+<section class="slide">
+<h2>Claude 3.5 Sonnet — Constitutional AI i filozofia Anthropic</h2>
+<p><strong>Constitutional AI</strong> to technika trenowania opracowana przez Anthropic, w której model jest uczony zestawem zasad etycznych.</p>
+<p>W praktyce oznacza to:</p>
+<ul>
+<li>Większą <strong>przewidywalność</strong> zachowania modelu w środowiskach produkcyjnych</li>
+<li>Mniejszą skłonność do generowania szkodliwych lub nieprawdziwych treści</li>
+<li>Model częściej odmówi wykonania ryzykownych poleceń — co bywa ograniczeniem, ale zwiększa bezpieczeństwo</li>
+</ul>
+<p>Firma Anthropic kładzie duży nacisk na <strong>bezpieczeństwo i zgodność</strong> (<em>alignment</em>).</p>
+<p><strong>Kiedy wybrać Claude 3.5 Sonnet:</strong> Analiza dużych ilości kodu lub dokumentów, generowanie i refaktoryzacja kodu, projekty wymagające spójności i wysokiej jakości generowanego tekstu.</p>
+
+</section>
+<section class="slide">
+<h2>Llama 3 i modele open-weight — wolność i odpowiedzialność</h2>
+<p><strong>Llama 3</strong> to rodzina modeli open-weight opracowana przez Meta AI. Dostępne warianty: <strong>8B, 70B i 405B</strong> parametrów.</p>
+<p><strong>Najważniejsza cecha: modele uruchamiają się lokalnie.</strong> Oznacza to:</p>
+<ul>
+<li><strong>Prywatność danych</strong> — żadne dane nie opuszczają własnej infrastruktury; kluczowe w sektorach regulated (zdrowie, finanse, prawo)</li>
+<li><strong>Brak opłat za wywołania</strong> — koszt to infrastruktura (GPU/CPU), a nie subskrypcja API</li>
+<li><strong>Pełna kontrola</strong> — możliwość fine-tuningu na własnych danych, modyfikacji system promptów, integracji z dowolną infrastrukturą</li>
+<li><strong>Niższe latencje</strong> — przy odpowiednim sprzęcie czas odpowiedzi może być krótszy niż przy zdalnym API</li>
+</ul>
+
+</section>
+<section class="slide">
+<h2>Llama 3 — ograniczenia i narzędzia do uruchamiania</h2>
+<p><strong>Ograniczenia modeli lokalnych:</strong></p>
+<ul>
+<li>Wymagają GPU lub dużej ilości RAM: model 8B potrzebuje 8–16 GB VRAM; 70B wymaga konfiguracji wielokartowej lub kwantyzacji</li>
+<li>Jakość generowania jest zazwyczaj niższa niż flagowych modeli komercyjnych (choć różnice maleją z każdą generacją)</li>
+<li>Zarządzanie infrastrukturą, aktualizacjami i bezpieczeństwem spoczywa na deweloperze</li>
+</ul>
+<p><strong>Narzędzia do uruchamiania modeli lokalnych:</strong></p>
+<ul>
+<li><strong>Ollama</strong> — najprostszy sposób na uruchomienie Llamy i innych modeli jedną komendą w terminalu</li>
+<li><strong>LM Studio</strong> — graficzny interfejs z wbudowanym API kompatybilnym z OpenAI</li>
+<li><strong>vLLM</strong> — wydajny serwer inferencji dla środowisk produkcyjnych</li>
+</ul>
+
+</section>
+<section class="slide">
+<h2>Porównanie modeli — tabela zestawcza</h2>
+<table>
+<thead>
+<tr>
+<th>Cecha</th>
+<th>GPT-4o</th>
+<th>Claude 3.5 Sonnet</th>
+<th>Llama 3 (70B)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Producent</strong></td>
+<td>OpenAI</td>
+<td>Anthropic</td>
+<td>Meta AI</td>
+</tr>
+<tr>
+<td><strong>Okno kontekstowe</strong></td>
+<td>128 000 tokenów</td>
+<td>200 000 tokenów</td>
+<td>8 192–131 072 tokenów</td>
+</tr>
+<tr>
+<td><strong>Dostęp</strong></td>
+<td>API (chmura)</td>
+<td>API (chmura)</td>
+<td>Lokalne / własna chmura</td>
+</tr>
+<tr>
+<td><strong>Prywatność danych</strong></td>
+<td>Wysyłane do OpenAI</td>
+<td>Wysyłane do Anthropic</td>
+<td>W pełni lokalna</td>
+</tr>
+<tr>
+<td><strong>Multimodalność</strong></td>
+<td>Tekst, obraz, dźwięk</td>
+<td>Tekst, obraz</td>
+<td>Tekst (warianty Vision)</td>
+</tr>
+<tr>
+<td><strong>Fine-tuning</strong></td>
+<td>Ograniczony (przez API)</td>
+<td>Niedostępny</td>
+<td>Pełny dostęp</td>
+</tr>
+<tr>
+<td><strong>Koszt użycia</strong></td>
+<td>Per token</td>
+<td>Per token</td>
+<td>Infrastruktura własna</td>
+</tr>
+<tr>
+<td><strong>Jakość kodu</strong></td>
+<td>Bardzo wysoka</td>
+<td>Bardzo wysoka</td>
+<td>Wysoka (70B+)</td>
+</tr>
+<tr>
+<td><strong>Licencja</strong></td>
+<td>Komercyjna zamknięta</td>
+<td>Komercyjna zamknięta</td>
+<td>Meta Llama License</td>
+</tr>
+</tbody></table>
+
+</section>
+<section class="slide">
+<h2>Benchmarki — co mierzą i jak je czytać</h2>
+<p>Przy wyborze modelu deweloperzy często sięgają po wyniki benchmarków. Warto rozumieć, co mierzą najpopularniejsze z nich:</p>
+<ul>
+<li><strong>MMLU</strong> (Massive Multitask Language Understanding) — wiedza ogólna i rozumowanie w 57 dziedzinach; dobry miernik „encyklopedyczności&quot; modelu</li>
+<li><strong>HumanEval / MBPP</strong> — rozwiązywanie zadań algorytmicznych; benchmark dla jakości generowania kodu</li>
+<li><strong>SWE-bench</strong> — realne bugi z GitHuba do naprawienia; najbardziej praktyczny benchmark dla AI developera</li>
+<li><strong>GPQA</strong> — pytania z fizyki, chemii i biologii na poziomie doktoratu; mierzy głębokie rozumowanie</li>
+</ul>
+<p>Każdy benchmark mierzy inny aspekt modelu — żaden nie jest kompletną miarą użyteczności.</p>
+
+</section>
+<section class="slide">
+<h2>Benchmarki — dlaczego nie ufać im ślepo</h2>
+<p>Wyniki benchmarków mogą wprowadzać w błąd z kilku powodów:</p>
+<ul>
+<li><strong>Data contamination</strong> — modele mogą być trenowane na zestawach testowych, co sztucznie zawyża wyniki</li>
+<li>Wyniki w benchmarkach <strong>nie zawsze przekładają się</strong> na rzeczywistą wydajność w konkretnym zadaniu (np. generowanie kodu w TypeScript vs. Python może się różnić)</li>
+<li>Liczy się całościowe doświadczenie: szybkość, koszt, niezawodność API, latencja — czego benchmarki nie mierzą</li>
+</ul>
+<p><strong>Rekomendacja praktyczna:</strong> Zamiast ufać tylko tabelom porównawczym, przetestuj model na własnym zestawie promptów reprezentatywnych dla projektu. Godzina testów własnoręcznych daje więcej informacji niż dziesiątki artykułów porównawczych.</p>
+
+</section>
+<section class="slide">
+<h2>Strategia wyboru modelu — model routing</h2>
+<p>W praktyce wiele projektów korzysta z <strong>kombinacji modeli</strong> dopasowanych do zadania. Podejście to zwane jest <em>model routing</em> lub <em>cascading</em>:</p>
+<ul>
+<li><strong>Szybkie, tanie zadania</strong> (klasyfikacja, ekstrakcja danych, formatowanie) → małe modele lokalne lub <code>gpt-4o-mini</code></li>
+<li><strong>Złożone rozumowanie, generowanie kodu</strong> → GPT-4o lub Claude 3.5 Sonnet</li>
+<li><strong>Praca z dokumentami wrażliwymi</strong> → Llama 3 uruchomiona lokalnie</li>
+<li><strong>Fine-tuning do wąskiej domeny</strong> → otwarty model (Llama, Mistral) dotrenowany na własnych danych</li>
+</ul>
+<p>Decyzja o wyborze modelu to kompromis między <strong>jakością</strong>, <strong>kosztem</strong>, <strong>prywatnością</strong> i <strong>kontrolą</strong>.</p>
+
+</section>
+<section class="slide">
+<h2>Podsumowanie — świadomy wybór modelu</h2>
+<p>Kluczowe wnioski z przeglądu modeli:</p>
+<ul>
+<li><strong>GPT-4o</strong> — najlepsza integracja z ekosystemem OpenAI, multimodalność, duże okno kontekstowe (128K tokenów); wybór do produkcyjnych aplikacji wielokrokowych</li>
+<li><strong>Claude 3.5 Sonnet</strong> — największe okno kontekstowe (200K tokenów), najwyższa jakość kodu (SWE-bench), Constitutional AI zapewniające przewidywalność</li>
+<li><strong>Llama 3</strong> — pełna prywatność danych, brak kosztów per-token, możliwość fine-tuningu; wymaga własnej infrastruktury GPU</li>
+<li>Benchmarki są wskazówką, ale nie wyrocznią — <strong>własne testy na reprezentatywnych promptach</strong> są niezbędne</li>
+<li>Świadomy AI developer potrafi uzasadnić wybór modelu wobec klienta lub zespołu, biorąc pod uwagę jakość, koszt, prywatność i kontrolę</li>
+</ul>
+
+</section>
+</body>
+</html>

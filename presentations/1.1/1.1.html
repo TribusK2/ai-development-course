@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prezentacja</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --accent: #6C47FF;
+  --accent-light: #EDE9FF;
+  --accent-mid: #8B6AFF;
+  --dark: #1A1A2E;
+  --text: #2D2D3A;
+  --text-muted: #6B6B8A;
+  --border: #E5E5F0;
+  --surface: #F8F8FC;
+  --code-bg: #F0EEFF;
+  --code-border: #C4B5FF;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+@page {
+  size: A4 landscape;
+  margin: 0;
+}
+
+section.slide {
+  display: block;
+  width: 297mm;
+  height: 210mm;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 14mm 20mm;
+  page-break-before: always;
+  break-before: page;
+  page-break-after: always;
+  break-after: page;
+  background: #ffffff;
+  position: relative;
+  color: var(--text);
+  font-size: 11pt;
+  line-height: 1.6;
+}
+
+section.slide:first-child {
+  page-break-before: avoid;
+  break-before: avoid;
+}
+
+/* Accent top bar */
+section.slide::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-mid) 60%, #C4B5FF 100%);
+}
+
+/* ─── Headings ───────────────────────────────────────────────────── */
+section.slide h1 {
+  font-size: 24pt;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 0 0 6mm 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  border-bottom: 2px solid var(--accent-light);
+  padding-bottom: 4mm;
+}
+
+section.slide h2 {
+  font-size: 17pt;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0 0 5mm 0;
+  line-height: 1.2;
+  padding-left: 4mm;
+  border-left: 4px solid var(--accent);
+}
+
+section.slide h3 {
+  font-size: 13pt;
+  font-weight: 600;
+  color: var(--dark);
+  margin: 4mm 0 2mm 0;
+}
+
+section.slide h4 {
+  font-size: 11pt;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 3mm 0 1.5mm 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─── Paragraphs ─────────────────────────────────────────────────── */
+section.slide p {
+  margin: 0 0 3mm 0;
+  font-size: 10.5pt;
+  color: var(--text);
+}
+
+/* ─── Lists ──────────────────────────────────────────────────────── */
+section.slide ul,
+section.slide ol {
+  margin: 0 0 3mm 0;
+  padding-left: 6mm;
+}
+
+section.slide ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+section.slide ul li {
+  position: relative;
+  padding-left: 7mm;
+  margin-bottom: 2mm;
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+
+section.slide ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+section.slide ol li {
+  margin-bottom: 2mm;
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+
+section.slide ul li ul li::before {
+  background: var(--accent-mid);
+  width: 4px;
+  height: 4px;
+}
+
+/* ─── Code ───────────────────────────────────────────────────────── */
+section.slide code {
+  font-family: 'Fira Mono', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 9.5pt;
+  background: var(--code-bg);
+  color: var(--accent);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+section.slide pre {
+  background: var(--code-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 4mm 5mm;
+  margin: 3mm 0;
+  overflow: hidden;
+}
+
+section.slide pre code {
+  background: transparent;
+  padding: 0;
+  color: var(--dark);
+  font-size: 9pt;
+  line-height: 1.5;
+}
+
+/* ─── Tables ─────────────────────────────────────────────────────── */
+section.slide table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 3mm 0;
+  font-size: 9.5pt;
+}
+
+section.slide th {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  padding: 2mm 4mm;
+  text-align: left;
+  letter-spacing: 0.02em;
+}
+
+section.slide td {
+  padding: 2mm 4mm;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: top;
+}
+
+section.slide tr:nth-child(even) td {
+  background: var(--surface);
+}
+
+/* ─── Blockquote ─────────────────────────────────────────────────── */
+section.slide blockquote {
+  border-left: 4px solid var(--accent-mid);
+  background: var(--accent-light);
+  margin: 3mm 0;
+  padding: 3mm 5mm;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+  color: var(--dark);
+  font-size: 10pt;
+}
+
+/* ─── Strong / em ─────────────────────────────────────────────────── */
+section.slide strong {
+  font-weight: 700;
+  color: var(--dark);
+}
+
+section.slide em {
+  color: var(--text-muted);
+}
+
+/* ─── Horizontal rule (slide separator visual, hidden) ───────────── */
+section.slide hr {
+  display: none;
+}
+
+</style>
+</head>
+<body>
+<section class="slide">
+<h1>Architektura Transformer: Tokeny, Okno Kontekstowe i Mechanizm Attention</h1>
+<p><strong>Moduł 1: Fundamenty i Mechanizmy LLM — Sekcja 1.1</strong></p>
+
+</section>
+<section class="slide">
+<h2>Przed Transformerem: Era RNN i LSTM</h2>
+<p>Przed rokiem 2017 przetwarzanie języka naturalnego (NLP) opierało się na <strong>rekurencyjnych sieciach neuronowych (RNN)</strong> i ich zaawansowanych wariantach, takich jak <strong>LSTM (Long Short-Term Memory)</strong>.</p>
+<p>Modele te analizowały tekst <strong>sekwencyjnie</strong> — słowo po słowie, od lewej do prawej. Podejście to miało dwie poważne wady:</p>
+<ul>
+<li><strong>Wolne trenowanie</strong> — niemożność zrównoleglenia operacji na dużych zbiorach danych</li>
+<li><strong>Problem długich zależności</strong> — trudność w utrzymaniu relacji między odległymi fragmentami tekstu (np. podmiot i orzeczenie rozdzielone wieloma zdaniami)</li>
+<li><strong>Wąskie gardło informacji</strong> — cały kontekst historyczny był kompresowany do jednego wektora stanu ukrytego</li>
+</ul>
+
+</section>
+<section class="slide">
+<h2>Przełom 2017: „Attention Is All You Need&quot;</h2>
+<p>W 2017 roku zespół badaczy Google opublikował przełomową pracę naukową <strong>„Attention Is All You Need&quot;</strong>, która zaproponowała zupełnie nową architekturę — <strong>Transformer</strong>.</p>
+<p>Kluczowa zmiana: porzucenie sekwencyjności na rzecz <strong>przetwarzania równoległego</strong>. Zamiast analizować tekst od lewej do prawej, model może jednocześnie „spojrzeć&quot; na wszystkie tokeny wejściowe i ocenić relacje między nimi.</p>
+<p>Transformer stał się fundamentem niemal wszystkich współczesnych dużych modeli językowych (LLM):</p>
+<ul>
+<li><strong>GPT-4, Claude, Gemini, Llama</strong> — wszystkie opierają się na tej architekturze lub jej bezpośrednich pochodnych</li>
+<li>Zrozumienie Transformera to zrozumienie <strong>silnika napędzającego całą rewolucję AI</strong></li>
+</ul>
+
+</section>
+<section class="slide">
+<h2>Kluczowe Składniki Architektury Transformer</h2>
+<p>Architektura Transformer składa się z kilku współpracujących ze sobą modułów:</p>
+<table>
+<thead>
+<tr>
+<th>Składnik</th>
+<th>Rola</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Embedding</strong></td>
+<td>Zamienia tokeny na wektory liczbowe reprezentujące znaczenie</td>
+</tr>
+<tr>
+<td><strong>Positional Encoding</strong></td>
+<td>Dodaje informację o kolejności tokenów w sekwencji</td>
+</tr>
+<tr>
+<td><strong>Multi-Head Attention</strong></td>
+<td>Mechanizm uwagi — śledzi relacje między tokenami</td>
+</tr>
+<tr>
+<td><strong>Feed-Forward Layers</strong></td>
+<td>Warstwy gęste przetwarzające każdy token niezależnie</td>
+</tr>
+<tr>
+<td><strong>Layer Normalization</strong></td>
+<td>Stabilizuje wartości między warstwami</td>
+</tr>
+<tr>
+<td><strong>Residual Connections</strong></td>
+<td>Zapobiegają zanikaniu gradientu podczas trenowania</td>
+</tr>
+</tbody></table>
+<p>Każdy blok Transformera łączy te elementy, a model składa się z wielu takich bloków ułożonych jeden na drugim.</p>
+
+</section>
+<section class="slide">
+<h2>Tokeny — Jak Model „Widzi&quot; Tekst</h2>
+<p>Model językowy nie czyta tekstu tak jak człowiek. Zamiast liter lub słów, operuje na <strong>tokenach</strong> — kawałkach tekstu odpowiadających fragmentom słów, całym słowom lub znakom interpunkcyjnym.</p>
+<p>Tokenizacja odbywa się <strong>przed</strong> przekazaniem tekstu do modelu, za pomocą algorytmu <strong>BPE (Byte Pair Encoding)</strong> lub jego wariantów (WordPiece, SentencePiece).</p>
+<p><strong>Jak działa BPE?</strong></p>
+<ol>
+<li>Algorytm analizuje częstotliwość par znaków w korpusie treningowym</li>
+<li>Najczęściej występujące pary są scalane w nowe podjednostki (<em>subwords</em>)</li>
+<li>Powtarzając ten proces, tworzy się słownik podjednostek optymalny dla danego języka</li>
+<li>Wynikiem jest słownik tokenów, który model wykorzystuje do kodowania dowolnego tekstu</li>
+</ol>
+
+</section>
+<section class="slide">
+<h2>Tokeny — Obserwacje Praktyczne</h2>
+<p>Kilka ważnych faktów o tokenach, które mają bezpośrednie znaczenie dla pracy z modelami:</p>
+<ul>
+<li>Słowo <code>„programowanie&quot;</code> może być jednym tokenem lub rozbite na <code>„program&quot;</code> + <code>„owanie&quot;</code> — zależy od modelu i jego słownika</li>
+<li>Liczba tokenów <strong>nie jest równa</strong> liczbie słów: angielski tekst zawiera przeciętnie 1 token na ~4 znaki; <strong>języki słowiańskie (w tym polski) są tokenizowane mniej efektywnie</strong> — generują więcej tokenów na słowo</li>
+<li>Każdy token ma swój <strong>indeks numeryczny (ID)</strong> — dla modelu tekst to ciąg liczb całkowitych, a nie liter</li>
+<li><strong>Koszty API</strong> są naliczane w tokenach, nie w słowach — optymalizacja tokenów w promptach to realna oszczędność przy dużej skali</li>
+</ul>
+<p><strong>Narzędzia do liczenia tokenów:</strong></p>
+<ul>
+<li><a href="https://platform.openai.com/tokenizer">platform.openai.com/tokenizer</a> — interaktywny tokenizer online</li>
+<li>Pakiet <code>js-tiktoken</code> w Node.js: <code>npm install js-tiktoken</code></li>
+</ul>
+
+</section>
+<section class="slide">
+<h2>Okno Kontekstowe — Pamięć Robocza Modelu</h2>
+<p><strong>Okno kontekstowe</strong> (<em>context window</em>) to maksymalna liczba tokenów, jaką model może jednocześnie „widzieć&quot; podczas generowania odpowiedzi.</p>
+<p>Obejmuje ono <strong>łącznie</strong>:</p>
+<ul>
+<li>Prompt (polecenie, instrukcje systemowe)</li>
+<li>Historię rozmowy</li>
+<li>Dołączone dokumenty lub fragmenty kodu</li>
+<li>Generowaną odpowiedź</li>
+</ul>
+<p><strong>Analogia:</strong> Wyobraź sobie kartkę papieru, na której możesz zapisać tylko określoną liczbę linii. Czytając długi tekst, musisz przewijać — wcześniejsze fragmenty „wypadają&quot; z pola widzenia i przestajesz móc się do nich odwoływać. Okno kontekstowe działa dokładnie tak samo.</p>
+
+</section>
+<section class="slide">
+<h2>Okno Kontekstowe — Porównanie Modeli</h2>
+<p>Różne modele mają bardzo różne rozmiary okna kontekstowego:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Okno kontekstowe</th>
+<th>Przybliżony ekwiwalent</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPT-3.5 Turbo</td>
+<td>16 384 tokenów</td>
+<td>~12 tys. słów</td>
+</tr>
+<tr>
+<td>GPT-4o</td>
+<td>128 000 tokenów</td>
+<td>~96 tys. słów</td>
+</tr>
+<tr>
+<td>Claude 3.5 Sonnet</td>
+<td>200 000 tokenów</td>
+<td>~150 tys. słów</td>
+</tr>
+<tr>
+<td>Gemini 1.5 Pro</td>
+<td>1 000 000 tokenów</td>
+<td>~750 tys. słów</td>
+</tr>
+<tr>
+<td>Llama 3 (8B)</td>
+<td>8 192 tokenów</td>
+<td>~6 tys. słów</td>
+</tr>
+</tbody></table>
+<p>Rozmiar okna kontekstowego to jeden z kluczowych parametrów przy wyborze modelu dla konkretnego zastosowania — szczególnie gdy pracujemy z długimi dokumentami lub wieloturową rozmową.</p>
+
+</section>
+<section class="slide">
+<h2>Okno Kontekstowe — Praktyczne Implikacje</h2>
+<p>Zrozumienie okna kontekstowego jest niezbędne przy projektowaniu aplikacji AI:</p>
+<ol>
+<li><strong>Długie dokumenty</strong> — kod całego projektu, transkrypcje spotkań, raporty PDF muszą zmieścić się w oknie kontekstowym lub wymagają strategii podziału (<em>chunking</em>) stosowanej w architekturze RAG</li>
+<li><strong>Historia rozmowy</strong> — każda kolejna wiadomość zajmuje miejsce; przy bardzo długich sesjach wcześniejsze wiadomości mogą zostać „zapomniane&quot;</li>
+<li><strong>Koszty</strong> — przetwarzanie większego kontekstu jest droższe, ponieważ każdy token wejściowy jest płatny</li>
+<li><strong>Zjawisko „Lost in the Middle&quot;</strong> — badania pokazują, że modele gorzej „pamiętają&quot; informacje umieszczone w <strong>środku</strong> długiego kontekstu niż na początku lub końcu — kluczowe informacje warto umieszczać na początku lub końcu promptu</li>
+</ol>
+
+</section>
+<section class="slide">
+<h2>Mechanizm Attention — Intuicja</h2>
+<p><strong>Attention</strong> (uwaga) to kluczowa innowacja architektury Transformer. Odpowiada na pytanie:</p>
+<blockquote>
+<p><em>„W kontekście tego tokenu, na które inne tokeny powinienem zwrócić uwagę i z jaką siłą?&quot;</em></p>
+</blockquote>
+<p><strong>Intuicja na przykładzie:</strong> Rozważ zdanie:</p>
+<blockquote>
+<p>„Bank odmówił pożyczki, bo zbankrutował.&quot;</p>
+</blockquote>
+<p>Słowo „zbankrutował&quot; opisuje podmiot — ale który? Człowiek bez trudu powiąże ten czasownik z „bankiem&quot;, a nie z „pożyczką&quot;. Mechanizm Attention robi dokładnie to samo: dla każdego tokenu oblicza dynamicznie, jak silnie jest powiązany z każdym innym tokenem w kontekście.</p>
+<p>Kluczowa różnica w stosunku do RNN: Attention pozwala modelowi „spojrzeć&quot; na odległy token bezpośrednio, bez pośrednich kroków — bez utraty informacji na długich dystansach.</p>
+
+</section>
+<section class="slide">
+<h2>Mechanizm Attention — Query, Key, Value</h2>
+<p>Mechanizm Attention opiera się na transformacji każdego tokenu w trzy wektory:</p>
+<table>
+<thead>
+<tr>
+<th>Wektor</th>
+<th>Pytanie które zadaje</th>
+<th>Rola</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Query (Q)</strong></td>
+<td>„Czego szukam?&quot;</td>
+<td>Reprezentuje bieżące zapytanie tokenu</td>
+</tr>
+<tr>
+<td><strong>Key (K)</strong></td>
+<td>„Co oferuję?&quot;</td>
+<td>Reprezentuje, jak każdy token „opisuje siebie&quot;</td>
+</tr>
+<tr>
+<td><strong>Value (V)</strong></td>
+<td>„Co przekazuję, jeśli zostanę wybrany?&quot;</td>
+<td>Treść informacyjna tokenu</td>
+</tr>
+</tbody></table>
+<p><strong>Proces obliczeń:</strong></p>
+<ol>
+<li>Oblicz podobieństwo Q bieżącego tokenu z K wszystkich tokenów (iloczyn skalarny)</li>
+<li>Podziel przez $\sqrt{d_k}$ (normalizacja — zapobiega eksplodującym gradientom)</li>
+<li>Zastosuj funkcję <strong>softmax</strong> — zamień podobieństwa na wagi sumujące się do 1</li>
+<li>Oblicz ważoną sumę wektorów V — to wynik uwagi dla danego tokenu</li>
+</ol>
+
+</section>
+<section class="slide">
+<h2>Mechanizm Attention — Formuła Matematyczna</h2>
+<p>Formalna definicja Scaled Dot-Product Attention:</p>
+<p>$\text{Attention}(Q, K, V) = \text{softmax}!\left(\frac{QK^T}{\sqrt{d_k}}\right)V$</p>
+<p><strong>Rozumienie intuicyjne formuły:</strong></p>
+<ul>
+<li>$QK^T$ — macierz podobieństw między wszystkimi parami tokenów (każdy z każdym)</li>
+<li>$\sqrt{d_k}$ — czynnik skalujący, gdzie $d_k$ to wymiarowość wektora klucza</li>
+<li>$\text{softmax}(\cdot)$ — normalizuje podobieństwa do rozkładu prawdopodobieństwa (wag)</li>
+<li>Wynik: ważona kombinacja wartości V — każdy token otrzymuje nową reprezentację uwzględniającą kontekst</li>
+</ul>
+<p><strong>Ważna praktyczna uwaga:</strong> Znajomość formuły nie jest wymagana do pracy z LLM — kluczowe jest rozumienie konceptu: model dynamicznie decyduje, które tokeny są istotne dla danego tokenu w danym kontekście.</p>
+
+</section>
+<section class="slide">
+<h2>Multi-Head Attention — Wiele Perspektyw Jednocześnie</h2>
+<p>Transformer nie stosuje jednego mechanizmu Attention, lecz <strong>wielogłowicowy Attention</strong> (Multi-Head Attention, MHA). Model równolegle uczy się wielu różnych „głowic uwagi&quot;, z których każda specjalizuje się w innym rodzaju relacji między tokenami.</p>
+<p><strong>Analogia panelu ekspertów:</strong> Wyobraź sobie, że ten sam tekst czyta jednocześnie kilku specjalistów z różnych dziedzin:</p>
+<ul>
+<li><strong>Głowica 1</strong> — wyłapuje relacje gramatyczne (podmiot–orzeczenie, dopełnienie)</li>
+<li><strong>Głowica 2</strong> — śledzi koreferencje zaimków (który „on&quot; do kogo się odnosi)</li>
+<li><strong>Głowica 3</strong> — rozpoznaje relacje semantyczne (synonimy, antonimy, hiponimy)</li>
+<li><strong>Głowica 4</strong> — wykrywa relacje czasowe (kolejność zdarzeń, związki przyczynowe)</li>
+</ul>
+<p>Wyniki wszystkich głowic są łączone i transformowane, tworząc bogatą, wielowymiarową reprezentację znaczenia każdego tokenu.</p>
+
+</section>
+<section class="slide">
+<h2>Multi-Head Attention — Skala w Dużych Modelach</h2>
+<p>Wielogłowicowy Attention w praktyce przemysłowej osiąga imponującą skalę:</p>
+<ul>
+<li><strong>GPT-4</strong> — korzysta z kilkudziesięciu głowic uwagi w każdej z wielu warstw</li>
+<li>Każda warstwa dodaje kolejny poziom abstrakcji: niższe warstwy uczą się prostych wzorców składniowych, wyższe — złożonych relacji semantycznych</li>
+<li>Głębokość modelu (liczba warstw) i szerokość (liczba głowic, wymiarowość wektorów) to kluczowe parametry architektury</li>
+</ul>
+<p><strong>Praktyczna konsekwencja dla promptowania:</strong></p>
+<p>Mechanizm Attention sprawia, że modele doskonale rozumieją <strong>kontekst</strong> — ale wyłącznie w granicach okna kontekstowego. Informacje spoza kontekstu nie istnieją dla modelu podczas generowania. Dlatego właśnie umieszczanie kluczowych informacji w odpowiednim miejscu promptu ma tak duże znaczenie dla jakości odpowiedzi.</p>
+
+</section>
+<section class="slide">
+<h2>Encoder, Decoder i Architektury Hybrydowe</h2>
+<p>Oryginalna architektura Transformer składała się z dwóch bloków. W świecie LLM wyewoluowały trzy rodziny modeli:</p>
+<table>
+<thead>
+<tr>
+<th>Architektura</th>
+<th>Przykłady</th>
+<th>Główne zastosowanie</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Encoder-only</strong></td>
+<td>BERT, RoBERTa</td>
+<td>Klasyfikacja tekstu, ekstrakcja informacji, NER</td>
+</tr>
+<tr>
+<td><strong>Decoder-only</strong></td>
+<td>GPT-4, Claude, Llama</td>
+<td>Generowanie tekstu, chatboty, asystenci kodowania</td>
+</tr>
+<tr>
+<td><strong>Encoder-Decoder</strong></td>
+<td>T5, BART</td>
+<td>Tłumaczenie maszynowe, podsumowania</td>
+</tr>
+</tbody></table>
+<p><strong>Modele Decoder-only — jak działają?</strong></p>
+<p>Praktycznie wszystkie modele, z którymi pracuje AI developer (GPT-4o, Claude, Llama 3), to architektura <strong>decoder-only</strong>. Generują tekst <strong>autoregresywnie</strong> — token po tokenie, za każdym razem na podstawie całego dotychczasowego kontekstu (prompt + już wygenerowane tokeny).</p>
+<p>Trenowanie jest równoległe, ale generowanie jest z natury sekwencyjne — model musi najpierw wygenerować token N, zanim może wygenerować token N+1.</p>
+
+</section>
+<section class="slide">
+<h2>Kluczowe Wnioski</h2>
+<p>Zrozumienie architektury Transformer to fundament świadomej pracy z modelami AI:</p>
+<ul>
+<li><strong>LLM to statystyczne maszyny</strong> przewidujące następny token na podstawie wszystkich poprzednich tokenów w kontekście</li>
+<li><strong>„Myślenie&quot; modelu</strong> to wielowarstwowe przekształcenie reprezentacji wektorowych przez mechanizm uwagi — nie ma tu żadnej symbolicznej logiki</li>
+<li><strong>Okno kontekstowe</strong> to twarda granica — model nie pamięta nic spoza niego; zarządzanie kontekstem to kluczowa umiejętność AI developera</li>
+<li><strong>Tokeny, nie słowa</strong> — zrozumienie tokenizacji pomaga optymalizować koszty i przewidywać zachowanie modelu</li>
+<li><strong>Attention = kontekst</strong> — model doskonale rozumie relacje między tokenami w oknie, ale nic poza nim</li>
+</ul>
+<p>Świadome zarządzanie kontekstem, tokenami i wyborem modelu to praktyczne umiejętności wynikające bezpośrednio z rozumienia tej architektury.</p>
+
+</section>
+</body>
+</html>

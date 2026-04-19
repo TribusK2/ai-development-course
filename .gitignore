@@ -58,5 +58,5 @@ ehthumbs.db
 *.gz
 
 # Prompts
-custom.prompt.md
+custom*.prompt.md
 init.prompt.md

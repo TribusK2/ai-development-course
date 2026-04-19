@@ -16,7 +16,7 @@ The course covers 5 modules and 20 sections — from the fundamentals of large l
 | 4 | Ship Fast with Angular |
 | 5 | AI Agents in CI/CD and DevOps |
 
-The full table of contents with all section titles is available in [contents.txt](contents.txt).
+The full table of contents with all section titles is available in [sections/contents.txt](sections/contents.txt).
 
 ---
 
@@ -37,7 +37,7 @@ New sections can be generated automatically using the `/write-section` prompt (G
    ```
    /write-section 2.1
    ```
-3. The AI will read the table of contents from `contents.txt`, locate the matching section, and create `sections/2.1.md` with theory and practical exercise topics.
+3. The AI will read the table of contents from `sections/contents.txt`, locate the matching section, and create `sections/2.1.md` with theory and practical exercise topics.
 
 The prompt is defined in [.github/prompts/write-section.prompt.md](.github/prompts/write-section.prompt.md). You can modify it to suit your needs — e.g. change the technology stack, preferred section length, or number of exercises.
 
@@ -60,10 +60,10 @@ npm install
 ### Run
 
 ```bash
-npm run generate-pdf
+npm run g-pdf
 ```
 
-The script (`generate-pdf.js`) combines all files from the `sections/` folder, renders them to HTML, and produces a PDF using Puppeteer.
+The script (`course-pdf/generate-pdf.js`) combines all files from the `sections/` folder, renders them to HTML, and produces a PDF using Puppeteer.
 
 ---
 

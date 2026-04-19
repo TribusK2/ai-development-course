@@ -1,0 +1,226 @@
+:root {
+  --accent: #6C47FF;
+  --accent-light: #EDE9FF;
+  --accent-mid: #8B6AFF;
+  --dark: #1A1A2E;
+  --text: #2D2D3A;
+  --text-muted: #6B6B8A;
+  --border: #E5E5F0;
+  --surface: #F8F8FC;
+  --code-bg: #F0EEFF;
+  --code-border: #C4B5FF;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+@page {
+  size: A4 landscape;
+  margin: 0;
+}
+
+section.slide {
+  display: block;
+  width: 297mm;
+  height: 210mm;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 14mm 20mm;
+  page-break-before: always;
+  break-before: page;
+  page-break-after: always;
+  break-after: page;
+  background: #ffffff;
+  position: relative;
+  color: var(--text);
+  font-size: 11pt;
+  line-height: 1.6;
+}
+
+section.slide:first-child {
+  page-break-before: avoid;
+  break-before: avoid;
+}
+
+/* Accent top bar */
+section.slide::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-mid) 60%, #C4B5FF 100%);
+}
+
+/* ─── Headings ───────────────────────────────────────────────────── */
+section.slide h1 {
+  font-size: 24pt;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 0 0 6mm 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  border-bottom: 2px solid var(--accent-light);
+  padding-bottom: 4mm;
+}
+
+section.slide h2 {
+  font-size: 17pt;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0 0 5mm 0;
+  line-height: 1.2;
+  padding-left: 4mm;
+  border-left: 4px solid var(--accent);
+}
+
+section.slide h3 {
+  font-size: 13pt;
+  font-weight: 600;
+  color: var(--dark);
+  margin: 4mm 0 2mm 0;
+}
+
+section.slide h4 {
+  font-size: 11pt;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 3mm 0 1.5mm 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─── Paragraphs ─────────────────────────────────────────────────── */
+section.slide p {
+  margin: 0 0 3mm 0;
+  font-size: 10.5pt;
+  color: var(--text);
+}
+
+/* ─── Lists ──────────────────────────────────────────────────────── */
+section.slide ul,
+section.slide ol {
+  margin: 0 0 3mm 0;
+  padding-left: 6mm;
+}
+
+section.slide ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+section.slide ul li {
+  position: relative;
+  padding-left: 7mm;
+  margin-bottom: 2mm;
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+
+section.slide ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+section.slide ol li {
+  margin-bottom: 2mm;
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+
+section.slide ul li ul li::before {
+  background: var(--accent-mid);
+  width: 4px;
+  height: 4px;
+}
+
+/* ─── Code ───────────────────────────────────────────────────────── */
+section.slide code {
+  font-family: 'Fira Mono', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 9.5pt;
+  background: var(--code-bg);
+  color: var(--accent);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+section.slide pre {
+  background: var(--code-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 4mm 5mm;
+  margin: 3mm 0;
+  overflow: hidden;
+}
+
+section.slide pre code {
+  background: transparent;
+  padding: 0;
+  color: var(--dark);
+  font-size: 9pt;
+  line-height: 1.5;
+}
+
+/* ─── Tables ─────────────────────────────────────────────────────── */
+section.slide table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 3mm 0;
+  font-size: 9.5pt;
+}
+
+section.slide th {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  padding: 2mm 4mm;
+  text-align: left;
+  letter-spacing: 0.02em;
+}
+
+section.slide td {
+  padding: 2mm 4mm;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: top;
+}
+
+section.slide tr:nth-child(even) td {
+  background: var(--surface);
+}
+
+/* ─── Blockquote ─────────────────────────────────────────────────── */
+section.slide blockquote {
+  border-left: 4px solid var(--accent-mid);
+  background: var(--accent-light);
+  margin: 3mm 0;
+  padding: 3mm 5mm;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+  color: var(--dark);
+  font-size: 10pt;
+}
+
+/* ─── Strong / em ─────────────────────────────────────────────────── */
+section.slide strong {
+  font-weight: 700;
+  color: var(--dark);
+}
+
+section.slide em {
+  color: var(--text-muted);
+}
+
+/* ─── Horizontal rule (slide separator visual, hidden) ───────────── */
+section.slide hr {
+  display: none;
+}
