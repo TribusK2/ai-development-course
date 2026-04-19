@@ -43,6 +43,36 @@ The prompt is defined in [.github/prompts/write-section.prompt.md](.github/promp
 
 ---
 
+## Generating presentations
+
+The repository includes a script for generating presentations (HTML + PDF) from the Markdown source files in the `presentations/` folder.
+
+### Requirements
+
+- [Node.js](https://nodejs.org/) (v18 or newer)
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Run
+
+```bash
+npm run g-presentation <section>
+```
+
+For example, to generate the presentation for section 2.1:
+
+```bash
+npm run g-presentation 2.1
+```
+
+The script (`presentations/presentation-generator/generate.js`) reads the Markdown file for the given section from `presentations/<section>/<section>.md`, renders it to HTML using the template in `presentations/presentation-generator/template.html`, and produces a PDF using Puppeteer.
+
+---
+
 ## Generating a PDF
 
 The repository includes a script for generating a PDF from all course sections.
