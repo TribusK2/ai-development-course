@@ -5,36 +5,35 @@ argument-hint: "section-number"
 agent: agent
 ---
 
-Przygotuj teorię oraz tematy zadań praktycznych dla sekcji planu nauki. Sekcje są ponumerowane w spisie treści, np. 1.1, 2.3 itd. Odpowiedz tylko na temat sekcji wskazanej w argumencie; nie pisz o innych sekcjach.
+Prepare the theory and practical exercise topics for a section of the learning plan. **All generated content must be written in Polish.** Sections are numbered in the table of contents, e.g. 1.1, 2.3, etc. Respond only about the section indicated in the argument; do not write about other sections.
 
-## Spis treści
+## Table of contents
 
-Przeczytaj spis treści zapisany w [contents](../../contents.txt).
+Read the table of contents stored in [contents](../../contents.txt).
 
-Oczekiwany format spisu treści: każda linia zawiera numer sekcji i tytuł, np. `2.1 — Nazwa sekcji` lub `2.1. Nazwa sekcji`. Jeśli format jest inny, spróbuj rozpoznać numer sekcji na początku linii.
+Expected format: each line contains a section number and title, e.g. `2.1 — Section title` or `2.1. Section title`. If the format differs, try to recognise the section number at the beginning of the line.
 
-## Numer sekcji
+## Section number
 
-- Odczytaj argument podany po `/write-section`.
-- Akceptowalny format numeru sekcji: `^\d+(\.\d+)*$` (np. `2`, `2.1`, `2.1.3`).
-- Jeśli argument jest numerem sekcji (np. `2.1`), znajdź odpowiadającą mu sekcję w spisie treści i zapisz jej tytuł.
-- Odczytaj też tytuł modułu, do którego należy ta sekcja (np. `Moduł 2: Ekosystem Vibe Coding i AI-first ID`), aby zidentyfikować kontekst.
-- Jeśli argument nie pasuje do wzorca lub nie znaleziono sekcji, odpowiedz komunikatem o błędzie i zakończ. Przykładowy komunikat: `Błąd: nieprawidłowy numer sekcji. Użyj formatu np. "2" lub "2.1".`
+- Read the argument provided after `/write-section`.
+- Accepted format: `^\d+(\.\d+)*$` (e.g. `2`, `2.1`, `2.1.3`).
+- Find the matching section in the table of contents and record its title.
+- Also read the module title that the section belongs to (e.g. `Moduł 2: Ekosystem Vibe Coding i AI-first IDE`), to establish context.
+- If the argument does not match the pattern or the section is not found, respond with an error message and stop. Example: `Błąd: nieprawidłowy numer sekcji. Użyj formatu np. "2" lub "2.1".`
 
-## Zadanie
+## Task
 
-- Utwórz nowy plik markdown w folderze `sections`, o nazwie odpowiadającej numerowi sekcji, np. `2.1.md`. Jeśli folder `sections` nie istnieje — utwórz go.
+- Create a new Markdown file in the `sections` folder, named after the section number, e.g. `2.1.md`. Create the folder if it does not exist.
+- Write the theory for the indicated section in Polish.
+- Preferred length: 4–7 thematic subsections, each 200–400 words (approximately 3–6 paragraphs). The theory should be concise but complete, covering all key concepts and skills for the section.
+- Where appropriate, include examples or analogies.
+- Use Bash, JavaScript, Angular, Angular-Material, Node.js, MongoDB, GitHub, AWS, AWS Lambda (serverless), and Docker (development only) in examples. Use other languages or pseudocode only when none of the listed technologies can be applied practically.
+- Write practical exercise topics (topics only, no solutions) for the section. Generate 4 topics: 1 easy, 2 medium, 1 advanced.
+- Use a structure and formatting suitable for a study script, but in an approachable style — use headings, bullet lists, bold text, tables, etc.
 
-- Napisz w języku polskim teorię dla sekcji wskazanej w argumencie.
-- Preferowana długość teorii: 4-7 podpunktów tematycznych, każdy po 200–400 słów (około 3–6 akapitów). Teoria powinna być zwięzła, ale kompletna i obejmować wszystkie kluczowe pojęcia i umiejętności związane z tą sekcją.
-- Tam gdzie to potrzebne, przedstaw przykłady lub analogie.
-- Używaj w przykładach Bash, JavaScript, Angular, Angular-Material, NodeJS, MongoDB, Github, AWS, AWS-Lambda (serverless), Docker (tylko w developmencie). Użyj innych języków programowania lub pseudokodu tylko wtedy jeśli nie da się praktycznie zastosować wymienionych technologii.
-- Napisz tematy zadań praktycznych (tylko tematy, bez rozwiązań) dla sekcji wskazanej w argumencie. Generuj 4 tematy: 1 łatwy, 2 średnie, 1 zaawansowany.
-- Zachowaj strukturę i formatowanie odpowiadające skryptowi naukowemu, ale w przyjemnej formie — używaj nagłówków, list punktowanych, pogrubień, tabel itp.
+## Review
 
-## Weryfikacja
-
-- Po napisaniu teorii i tematów zadań, sprawdź czy nie zawierają one błędów merytorycznych, są kompletne i zgodne z tytułem sekcji.
-- Sprawdź czy nie ma błędów ortograficznych lub gramatycznych.
-- Sprawdź czy tłumaczenia pojęć anglojęzycznych są poprawne i spójne z resztą materiału.
-- Jeśli wykryjesz jakiekolwiek problemy, popraw je przed zakończeniem.
+- After writing the theory and exercise topics, verify that they contain no factual errors, are complete, and match the section title.
+- Check for spelling and grammar errors (Polish language).
+- Verify that translations of English terms are accurate and consistent throughout the material.
+- If you detect any problems, fix them before finishing.
