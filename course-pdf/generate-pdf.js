@@ -17,10 +17,25 @@ const { marked } = require('marked');
 const fs = require('fs');
 const path = require('path');
 
-const katexDir = path.join(__dirname, 'node_modules', 'katex', 'dist');
-const katexCssHref = 'file:///' + katexDir.replace(/\\/g, '/')+ '/katex.min.css';
+// If the script lives in course-pdf/, compute project root accordingly so
+// references to `sections/` and `node_modules` continue to work after moving.
+const isInCoursePdfDir = path.basename(__dirname) === 'course-pdf';
+const projectRoot = isInCoursePdfDir ? path.resolve(__dirname, '..') : __dirname;
 
-// Course structure
+const katexDir = path.join(projectRoot, 'node_modules', 'katex', 'dist');
+const katexCssHref = 'file:///' + katexDir.replace(/\\/g, '/') + '/katex.min.css';
+
+// Load local stylesheet (course-pdf/styles.css) if present so we don't inline
+// a very large CSS block inside the JS template. This keeps the HTML readable
+// and ensures styles are available when Puppeteer opens the file:// URL.
+const localCssPath = path.join(__dirname, 'styles.css');
+let localCss = '';
+try {
+  localCss = fs.readFileSync(localCssPath, 'utf8');
+} catch (err) {
+  console.warn('Warning: could not read course-pdf/styles.css:', err.message);
+}
+
 const sections = [
   { module: 1, moduleTitle: 'Fundamenty i Mechanizmy LLM', chapter: 1, file: '1.1.md' },
   { module: 1, moduleTitle: 'Fundamenty i Mechanizmy LLM', chapter: 2, file: '1.2.md' },
@@ -44,13 +59,11 @@ const sections = [
   { module: 5, moduleTitle: 'Agenty AI w procesach CI/CD i DevOps', chapter: 4, file: '5.4.md' },
 ];
 
-// Extract chapter title from first H1 in markdown file
 function extractTitle(mdContent) {
   const match = mdContent.match(/^#\s+(.+)$/m);
   return match ? match[1].trim() : 'Rozdział';
 }
 
-// Get unique modules
 function getModules() {
   const seen = new Set();
   return sections.filter(s => {
@@ -60,7 +73,6 @@ function getModules() {
   }).map(s => ({ id: s.module, title: s.moduleTitle }));
 }
 
-// Build TOC HTML
 function buildTOC(sectionsWithTitles) {
   const modules = getModules();
   let html = '';
@@ -80,20 +92,38 @@ function buildTOC(sectionsWithTitles) {
   return html;
 }
 
-// Configure marked
 marked.setOptions({
   gfm: true,
   breaks: false,
 });
 
-// Custom renderer to handle heading IDs etc.
 const renderer = new marked.Renderer();
 
 // Preprocess LaTeX math before marked parsing.
 // marked mangles LaTeX: treats _k as italic, \frac etc. as escape sequences.
 // Strategy: extract math strings, replace with unique placeholders, restore after parse.
+//
+// Code blocks (fenced ``` and inline `) are protected first so that $ signs
+// inside JS template literals, MongoDB operators, etc. are never treated as
+// LaTeX delimiters, preventing garbled output and spurious red KaTeX errors.
 function preprocessMath(md) {
   const mathBlocks = [];
+  const codeBlocks = [];
+
+  // Protect fenced code blocks (must run before inline-code regex).
+  // Backreference ensures matching fence length; closing fence must be on its own line
+  // to prevent \`\`\`diff mid-line in template literals from terminating the block.
+  md = md.replace(/(`{3,})[^\n]*\n[\s\S]*?\n\1[ \t]*(?:\n|$)/g, (match) => {
+    codeBlocks.push(match);
+    return `%%CODEBLOCK${codeBlocks.length - 1}%%`;
+  });
+  // Protect inline code spans (` ... `) – single backtick, no newlines.
+  md = md.replace(/`[^`\n]+`/g, (match) => {
+    codeBlocks.push(match);
+    return `%%CODEBLOCK${codeBlocks.length - 1}%%`;
+  });
+
+  // Process LaTeX math on the now-code-free text.
   // Display math first (double-dollar), to avoid matching the inner $ of $$
   md = md.replace(/\$\$([\s\S]+?)\$\$/g, (_, math) => {
     mathBlocks.push({ type: 'display', content: math.trim() });
@@ -104,6 +134,10 @@ function preprocessMath(md) {
     mathBlocks.push({ type: 'inline', content: math.trim() });
     return `%%MATHBLOCK${mathBlocks.length - 1}%%`;
   });
+
+  // Restore code blocks so marked.parse() sees the original fenced syntax.
+  md = md.replace(/%%CODEBLOCK(\d+)%%/g, (_, idx) => codeBlocks[parseInt(idx, 10)]);
+
   return { processed: md, mathBlocks };
 }
 
@@ -122,16 +156,13 @@ function restoreMath(html, mathBlocks) {
   });
 }
 
-// Read and process all sections
-const sectionsDir = path.join(__dirname, 'sections');
+const sectionsDir = path.join(projectRoot, 'sections');
 const sectionsWithTitles = sections.map(s => {
   const content = fs.readFileSync(path.join(sectionsDir, s.file), 'utf-8');
   const title = extractTitle(content);
   return { ...s, content, chapterTitle: title };
 });
 
-
-// Build body HTML
 let bodyHtml = '';
 let currentModule = null;
 
@@ -189,681 +220,7 @@ const fullHtml = `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Praktyczny Kurs AI Development</title>
 <style>
-  /* ─── Base ─────────────────────────────────────────────────────── */
-  @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
-
-  :root {
-    --accent: #6C47FF;
-    --accent-light: #EDE9FF;
-    --accent-mid: #8B6AFF;
-    --dark: #1A1A2E;
-    --text: #2D2D3A;
-    --text-muted: #6B6B8A;
-    --border: #E5E5F0;
-    --surface: #F8F8FC;
-    --code-bg: #1E1E3A;
-    --code-text: #E8E8F8;
-    --green: #00C896;
-    --orange: #FF8C42;
-    --red: #FF4D6D;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html, body {
-    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-    font-size: 10.5pt;
-    line-height: 1.7;
-    color: var(--text);
-    background: #fff;
-  }
-
-  /* ─── Page breaks ───────────────────────────────────────────────── */
-  .page-break {
-    page-break-before: always;
-  }
-  .title-page {
-    page: cover-page;
-    width: 100%;
-    height: 100vh;
-    min-height: 900px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #1A1A2E 0%, #16213E 40%, #0F3460 100%);
-    color: #fff;
-    text-align: center;
-    padding: 60px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .title-page::before {
-    content: '';
-    position: absolute;
-    top: -200px; left: -200px;
-    width: 600px; height: 600px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(108,71,255,0.3) 0%, transparent 70%);
-  }
-
-  .title-page::after {
-    content: '';
-    position: absolute;
-    bottom: -150px; right: -150px;
-    width: 500px; height: 500px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,200,150,0.2) 0%, transparent 70%);
-  }
-
-  .title-logo {
-    font-size: 11pt;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    margin-bottom: 48px;
-    font-weight: 500;
-  }
-
-  .title-badge {
-    display: inline-block;
-    background: rgba(108,71,255,0.3);
-    border: 1px solid rgba(108,71,255,0.6);
-    color: #C4B5FF;
-    font-size: 9pt;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 6px 20px;
-    border-radius: 50px;
-    margin-bottom: 36px;
-  }
-
-  .title-main {
-    font-size: 32pt;
-    font-weight: 800;
-    line-height: 1.15;
-    margin-bottom: 24px;
-    background: linear-gradient(135deg, #FFFFFF 0%, #C4B5FF 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    max-width: 800px;
-  }
-
-  .title-subtitle {
-    font-size: 13pt;
-    font-weight: 300;
-    color: rgba(255,255,255,0.65);
-    max-width: 640px;
-    line-height: 1.6;
-    margin-bottom: 64px;
-  }
-
-  .title-divider {
-    width: 60px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--green));
-    border-radius: 2px;
-    margin: 0 auto 48px;
-  }
-
-  .title-meta {
-    display: flex;
-    gap: 48px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .title-meta-item {
-    text-align: center;
-  }
-
-  .title-meta-label {
-    font-size: 8pt;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 4px;
-  }
-
-  .title-meta-value {
-    font-size: 11pt;
-    font-weight: 600;
-    color: rgba(255,255,255,0.9);
-  }
-
-  .title-modules-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    margin-top: 64px;
-    width: 100%;
-    max-width: 900px;
-  }
-
-  .title-module-chip {
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 10px;
-    padding: 12px 10px;
-    font-size: 7.5pt;
-    color: rgba(255,255,255,0.7);
-    text-align: center;
-    line-height: 1.4;
-  }
-
-  .title-module-chip-num {
-    display: block;
-    font-size: 14pt;
-    font-weight: 700;
-    color: var(--accent-mid);
-    margin-bottom: 4px;
-  }
-
-  /* ─── TOC Page ──────────────────────────────────────────────────── */
-  .toc-page {
-    padding: 50px 80px 60px;
-    min-height: 100vh;
-  }
-
-  .toc-page-header {
-    margin-bottom: 48px;
-    padding-bottom: 24px;
-    border-bottom: 2px solid var(--border);
-  }
-
-  .toc-page-label {
-    font-size: 9pt;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 8px;
-  }
-
-  .toc-page-title {
-    font-size: 24pt;
-    font-weight: 800;
-    color: var(--dark);
-  }
-
-  .toc-module {
-    margin-top: 28px;
-    margin-bottom: 6px;
-  }
-
-  .toc-module-link {
-    text-decoration: none;
-    display: block;
-    font-size: 11pt;
-    font-weight: 700;
-    color: var(--dark);
-    padding: 12px 16px;
-    background: var(--accent-light);
-    border-left: 4px solid var(--accent);
-    border-radius: 0 8px 8px 0;
-    transition: all 0.2s;
-  }
-
-  .toc-chapter {
-    padding-left: 24px;
-    margin: 2px 0;
-  }
-
-  .toc-chapter-link {
-    text-decoration: none;
-    display: block;
-    font-size: 9.5pt;
-    color: var(--text);
-    padding: 6px 12px;
-    border-radius: 6px;
-    transition: background 0.2s;
-  }
-
-  /* ─── Module Cover ──────────────────────────────────────────────── */
-  .module-cover {
-    page: module-cover-page;
-    page-break-before: auto;
-    break-before: auto;
-    width: 100%;
-    height: 100vh;
-    min-height: 800px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--dark) 0%, #0F3460 100%);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .module-cover::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 50px,
-      rgba(255,255,255,0.02) 50px,
-      rgba(255,255,255,0.02) 51px
-    );
-  }
-
-  .module-cover-inner {
-    position: relative;
-    text-align: center;
-    color: #fff;
-    padding: 60px 80px;
-    max-width: 700px;
-  }
-
-  .module-number {
-    font-size: 10pt;
-    font-weight: 600;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--accent-mid);
-    margin-bottom: 20px;
-  }
-
-  .module-title {
-    font-size: 26pt;
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 40px;
-    color: #fff;
-  }
-
-  .module-chapters-list {
-    text-align: left;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 12px;
-    padding: 24px 28px;
-    margin-top: 16px;
-  }
-
-  .module-chapter-item {
-    font-size: 9.5pt;
-    color: rgba(255,255,255,0.7);
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    line-height: 1.4;
-  }
-
-  .module-chapter-item:last-child {
-    border-bottom: none;
-  }
-
-  /* ─── Chapter ───────────────────────────────────────────────────── */
-  .chapter {
-    padding: 40px 80px 60px;
-  }
-
-  .chapter-header {
-    margin-bottom: 48px;
-    padding-bottom: 24px;
-    border-bottom: 2px solid var(--border);
-  }
-
-  .chapter-module-label {
-    display: inline-block;
-    font-size: 8.5pt;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: var(--accent-light);
-    padding: 4px 12px;
-    border-radius: 50px;
-    margin-bottom: 16px;
-  }
-
-  .chapter-title {
-    font-size: 22pt;
-    font-weight: 800;
-    color: var(--dark);
-    line-height: 1.25;
-  }
-
-  /* ─── Content Typography ────────────────────────────────────────── */
-  /* Hide only the first H1 inside chapter-content (it repeats the chapter-title).
-     We do NOT hide h1 globally — module covers use h1.module-title. */
-  .chapter-content > h1:first-child {
-    display: none;
-  }
-
-  .chapter-content h2 {
-    font-size: 14pt;
-    font-weight: 700;
-    color: var(--dark);
-    margin-top: 36px;
-    margin-bottom: 14px;
-    padding-left: 12px;
-    border-left: 4px solid var(--accent);
-    page-break-after: avoid;
-    break-after: avoid;
-  }
-
-  .chapter-content h3 {
-    font-size: 11.5pt;
-    font-weight: 700;
-    color: var(--dark);
-    margin-top: 24px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    page-break-after: avoid;
-    break-after: avoid;
-  }
-
-  .chapter-content h3::before {
-    content: '';
-    display: inline-block;
-    width: 4px;
-    height: 16px;
-    background: var(--accent);
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
-
-  .chapter-content h4 {
-    font-size: 10.5pt;
-    font-weight: 600;
-    color: var(--text);
-    margin-top: 18px;
-    margin-bottom: 8px;
-    page-break-after: avoid;
-    break-after: avoid;
-  }
-
-  .chapter-content h2 + *,
-  .chapter-content h3 + *,
-  .chapter-content h4 + * {
-    page-break-before: avoid;
-    break-before: avoid;
-  }
-
-  .no-break-heading {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .chapter-content p {
-    margin-bottom: 14px;
-    font-size: 10.5pt;
-    line-height: 1.75;
-    color: var(--text);
-  }
-
-  .chapter-content ul, .chapter-content ol {
-    margin: 12px 0 16px 24px;
-    padding: 0;
-  }
-
-  .chapter-content li {
-    margin-bottom: 6px;
-    font-size: 10.5pt;
-    line-height: 1.65;
-  }
-
-  .chapter-content li::marker {
-    color: var(--accent);
-  }
-
-  .chapter-content strong {
-    font-weight: 700;
-    color: var(--dark);
-  }
-
-  .chapter-content em {
-    font-style: italic;
-    color: var(--text-muted);
-  }
-
-  /* ─── Blockquote / Callout ──────────────────────────────────────── */
-  .chapter-content blockquote {
-    margin: 16px 0;
-    padding: 14px 18px;
-    background: var(--accent-light);
-    border-left: 4px solid var(--accent);
-    border-radius: 0 8px 8px 0;
-    font-size: 10pt;
-    color: var(--text);
-    page-break-inside: avoid;
-  }
-
-  /* ─── Code ──────────────────────────────────────────────────────── */
-  .chapter-content code {
-    font-family: Consolas, 'Courier New', monospace;
-    font-size: 8.5pt;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 2px 5px;
-    border-radius: 4px;
-    color: #7B3FEE;
-    word-break: break-word;
-  }
-
-  .chapter-content pre {
-    margin: 16px -38px;
-    background: var(--code-bg);
-    border-radius: 6px;
-    overflow: hidden;
-    position: relative;
-    page-break-inside: avoid;
-  }
-
-  .chapter-content pre code {
-    display: block;
-    padding: 14px 20px;
-    font-family: Consolas, 'Courier New', monospace;
-    font-size: 7.5pt;
-    line-height: 1.5;
-    color: var(--code-text);
-    background: transparent;
-    border: none;
-    white-space: pre-wrap;
-    word-break: normal;
-    overflow-wrap: break-word;
-  }
-
-  /* ─── Tables ────────────────────────────────────────────────────── */
-  .chapter-content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 16px 0;
-    font-size: 9.5pt;
-    border: 1px solid var(--border);
-    page-break-inside: avoid;
-  }
-
-  .chapter-content thead {
-    background: var(--dark);
-    color: #fff;
-  }
-
-  .chapter-content thead th {
-    padding: 9px 13px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 9pt;
-    letter-spacing: 0.03em;
-  }
-
-  .chapter-content tbody tr:nth-child(even) {
-    background: var(--surface);
-  }
-
-  .chapter-content td {
-    padding: 8px 13px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-    line-height: 1.5;
-    word-break: break-word;
-  }
-
-  /* ─── Horizontal rule ───────────────────────────────────────────── */
-  .chapter-content hr {
-    border: none;
-    border-top: 2px solid var(--border);
-    margin: 32px 0;
-  }
-
-  /* ─── KaTeX Math ────────────────────────────────────────────────── */
-  .math-display {
-    display: block;
-    margin: 20px 0;
-    text-align: center;
-  }
-  .math-inline {
-    display: inline;
-  }
-
-  /* ─── Module cover title — must stay visible and styled correctly ─ */
-  .module-cover .module-title {
-    font-size: 26pt;
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 40px;
-    color: #fff !important;
-    display: block !important;
-    border: none !important;
-    padding: 0 !important;
-    background: none !important;
-    -webkit-text-fill-color: #fff !important;
-  }
-
-  /* ─── License Page ────────────────────────────────────────────── */
-  .license-page {
-    padding: 60px 80px 80px;
-    min-height: 100vh;
-  }
-
-  .license-page-header {
-    margin-bottom: 48px;
-    padding-bottom: 24px;
-    border-bottom: 2px solid var(--border);
-  }
-
-  .license-page-label {
-    font-size: 9pt;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 8px;
-  }
-
-  .license-page-title {
-    font-size: 24pt;
-    font-weight: 800;
-    color: var(--dark);
-  }
-
-  .license-copyright {
-    background: var(--accent-light);
-    border-left: 4px solid var(--accent);
-    border-radius: 0 8px 8px 0;
-    padding: 18px 22px;
-    margin-bottom: 36px;
-    font-size: 11pt;
-    font-weight: 600;
-    color: var(--dark);
-  }
-
-  .license-body {
-    font-size: 9.5pt;
-    color: var(--text);
-    line-height: 1.75;
-    margin-bottom: 32px;
-  }
-
-  .license-body p {
-    margin-bottom: 12px;
-  }
-
-  .license-url {
-    color: var(--accent);
-    font-weight: 600;
-    word-break: break-all;
-  }
-
-  .license-notice-title {
-    font-size: 12pt;
-    font-weight: 700;
-    color: var(--dark);
-    margin: 36px 0 16px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .license-notice-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin-bottom: 12px;
-    font-size: 9pt;
-    line-height: 1.6;
-  }
-
-  .license-notice-item strong {
-    display: block;
-    font-size: 10pt;
-    color: var(--dark);
-    margin-bottom: 4px;
-  }
-
-  .license-notice-item .notice-license-badge {
-    display: inline-block;
-    background: var(--accent-light);
-    color: var(--accent);
-    font-size: 7.5pt;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    padding: 2px 8px;
-    border-radius: 4px;
-    margin-right: 6px;
-  }
-
-  /* ─── Page layout ───────────────────────────────────────────────── */
-  @page {
-    size: A4;
-    margin: 18mm 18mm 22mm 18mm;
-  }
-
-  @page cover-page {
-    size: A4;
-    margin: 0;
-  }
-
-  @page module-cover-page {
-    size: A4;
-    margin: 0;
-  }
-
-  /* Print-specific */
-  @media print {
-    .toc-page {
-      page-break-after: always;
-    }
-    .chapter {
-      page-break-before: always;
-    }
-    body {
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-    .chapter-content pre,
-    .chapter-content table,
-    .chapter-content blockquote {
-      page-break-inside: avoid;
-    }
-  }
+${localCss}
 </style>
 <link rel="stylesheet" href="${katexCssHref}">
 </head>
@@ -1015,11 +372,9 @@ ${bodyHtml}
 </body>
 </html>`;
 
-// Write HTML for debugging
 fs.writeFileSync(path.join(__dirname, 'output.html'), fullHtml, 'utf-8');
-console.log('HTML written to output.html');
+console.log('HTML written to output.html (course-pdf/)');
 
-// Generate PDF
 (async () => {
   console.log('Launching browser...');
   const browser = await puppeteer.launch({
@@ -1040,7 +395,6 @@ console.log('HTML written to output.html');
   await page.evaluate(() => document.fonts.ready);
   await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // Render KaTeX math formulas
   console.log('Rendering math formulas...');
   await page.addScriptTag({ path: path.join(katexDir, 'katex.min.js') });
   await page.evaluate(() => {
@@ -1068,8 +422,8 @@ console.log('HTML written to output.html');
   //         so it jumps whole to the next page leaving a blank gap.
   //
   // Pass 1: Wrap each non-first heading with its immediately following element
-  //         (only if the element is short ≤120 chars, to avoid huge wrappers
-  //         that get pushed entire to the next page — issue 2).
+  //         (only if the element is short ≤120 chars, to avoid pushing a large
+  //         wrapper entirely to the next page).
   //         Small/medium blocks after the heading are included; large pre excluded.
   //
   // Pass 2: Walk backward from every still-unwrapped block, collect preceding
@@ -1080,8 +434,7 @@ console.log('HTML written to output.html');
   await page.evaluate(() => {
     const BLOCK_TAGS = new Set(['table', 'pre', 'blockquote']);
     const INTRO_TAGS = new Set(['p', 'ul', 'ol']);
-    const MAX_INTRO_CHARS = 120;   // Only short caption labels; avoids pulling long
-                                   // content paragraphs into wrappers (issue 2)
+    const MAX_INTRO_CHARS = 120;   // Only short captions — avoids pulling long paragraphs into wrappers
     const MAX_PRE_LINES = 30;
 
     function countPreLines(pre) {
@@ -1135,7 +488,7 @@ console.log('HTML written to output.html');
       const toWrap = [heading];
       let el = heading.nextElementSibling;
 
-      // Collect up to 2 short intro elements (strict 120-char limit)
+      // Collect up to 2 short intro elements
       let introCount = 0;
       while (
         el && introCount < 2 &&
