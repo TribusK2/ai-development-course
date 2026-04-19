@@ -17,6 +17,9 @@ const { marked } = require('marked');
 const fs = require('fs');
 const path = require('path');
 
+const katexDir = path.join(__dirname, 'node_modules', 'katex', 'dist');
+const katexCssHref = 'file:///' + katexDir.replace(/\\/g, '/')+ '/katex.min.css';
+
 // Course structure
 const sections = [
   { module: 1, moduleTitle: 'Fundamenty i Mechanizmy LLM', chapter: 1, file: '1.1.md' },
@@ -862,7 +865,7 @@ const fullHtml = `<!DOCTYPE html>
     }
   }
 </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="${katexCssHref}">
 </head>
 <body>
 
@@ -1021,13 +1024,14 @@ console.log('HTML written to output.html');
   console.log('Launching browser...');
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--allow-file-access-from-files'],
   });
 
   const page = await browser.newPage();
 
   console.log('Loading HTML content...');
-  await page.setContent(fullHtml, {
+  const outputHtmlUrl = 'file:///' + path.join(__dirname, 'output.html').replace(/\\/g, '/');
+  await page.goto(outputHtmlUrl, {
     waitUntil: 'networkidle0',
     timeout: 60000,
   });
@@ -1038,7 +1042,7 @@ console.log('HTML written to output.html');
 
   // Render KaTeX math formulas
   console.log('Rendering math formulas...');
-  await page.addScriptTag({ url: 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js' });
+  await page.addScriptTag({ path: path.join(katexDir, 'katex.min.js') });
   await page.evaluate(() => {
     document.querySelectorAll('.math-placeholder').forEach(el => {
       const tex = el.getAttribute('data-math');
