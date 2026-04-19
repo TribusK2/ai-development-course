@@ -10,7 +10,7 @@
   "author": "Krzysztof Rytlewski",
   "license": "Apache-2.0",
   "type": "commonjs",
-  "dependencies": {
+  "devDependencies": {
     "marked": "18.0.0",
     "pdf-lib": "1.17.1",
     "puppeteer": "24.41.0"
