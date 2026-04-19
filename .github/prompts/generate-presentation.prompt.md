@@ -10,8 +10,8 @@ Read the section file from the `sections` folder and generate a slide presentati
 ## Input validation
 
 - Read the argument as the section number. Accepted format: `^\d+(\.\d+)*$` (e.g. `2`, `2.1`, `2.1.3`).
-- If the argument does not match, respond with exactly: `Błąd: nieprawidłowy numer sekcji. Użyj formatu np. "2" lub "2.1".` and stop.
-- Locate `sections/<SECTION>.md`. If it does not exist, respond with exactly: `Błąd: nie znaleziono pliku sekcji: sections/<SECTION>.md` and stop.
+- If the argument does not match, respond with exactly: `Error: incorrect section number. Use format e.g. "2" or "2.1".` and stop.
+- Locate `sections/<SECTION>.md`. If it does not exist, respond with exactly: `Error: section file not found: sections/<SECTION>.md` and stop.
 - Read the entire source file.
 - Read `package.json` and extract the `"author"` field value.
 
