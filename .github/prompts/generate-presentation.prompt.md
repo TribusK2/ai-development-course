@@ -9,30 +9,57 @@ Read the section file from the `sections` folder and generate a slide presentati
 
 ## Input validation
 
-- Read the argument provided after `/generate-presentation` as the section number. Accepted format: `^\d+(\.\d+)*$` (e.g. `2`, `2.1`, `2.1.3`).
-- If the argument does not match the pattern, respond with exactly: `Błąd: nieprawidłowy numer sekcji. Użyj formatu np. "2" lub "2.1".` and stop.
+- Read the argument as the section number. Accepted format: `^\d+(\.\d+)*$` (e.g. `2`, `2.1`, `2.1.3`).
+- If the argument does not match, respond with exactly: `Błąd: nieprawidłowy numer sekcji. Użyj formatu np. "2" lub "2.1".` and stop.
 - Locate `sections/<SECTION>.md`. If it does not exist, respond with exactly: `Błąd: nie znaleziono pliku sekcji: sections/<SECTION>.md` and stop.
-- Load the entire file as the authoritative source.
+- Read the entire source file.
+- Read `package.json` and extract the `"author"` field value.
 
 ## Stage 1 — Markdown generation
 
 Generate the presentation in Markdown with slides separated by `\n---\n`. Do not include practical exercises — focus on theory and key concepts.
 
+**Title slide (first slide):**
+
+Use this exact structure, taking values from the source file header and `package.json`:
+
+```markdown
+# <SECTION> <TITLE>
+
+**Moduł X: Module Name**
+
+<AUTHOR> · <YEAR>
+```
+
+- `# <SECTION> <TITLE>` — copy the H1 verbatim from `sections/<SECTION>.md`
+- `**Moduł X: Module Name**` — copy the content of the `> **...**` blockquote from the source file header, rendered as a plain paragraph (without `>`)
+- `<AUTHOR>` — value of the `"author"` field from `package.json`
+- `<YEAR>` — current year
+
+**Slide length limits (strict, enforced per slide):**
+
+- Continuous text: ≤ 100 words
+- Bullet or numbered list: ≤ 80 words
+- Slide with a code block: ≤ 40 words of explanatory text (code itself excluded)
+- At most one code block per slide; exception: multiple blocks allowed only if each is ≤ 10 words
+- Skip code blocks longer than 10 lines; replace with descriptive text (≤ 40 words)
+- When content exceeds a limit, split it across multiple slides while preserving logical flow
+- These limits take priority over the slide count guideline below
+
 **Content requirements:**
 
-- Cover **at least 70 % of the information** from the source: every significant concept, definition, explanation, analogy, and example must appear.
-- Each slide must contain descriptive sentences and short explanations — not just headings and bare bullet labels.
-- Bullet points must be full sentences or well-developed fragments. Aim for 3–6 bullets per slide.
-- If the source explains _why_ something works or _what it means in practice_, include that explanation.
-- Match slide count to content (usually 10–18 slides). Split long paragraphs across multiple slides with sub-headings.
-- Dedicate a separate slide to each definition, formula, or diagram, including a concrete example or intuitive explanation.
+- Cover **at least 70% of the information** from the source: every significant concept, definition, explanation, analogy, and example must appear.
+- Each slide must contain descriptive sentences or well-developed bullet fragments — not just headings and bare labels.
+- Include explanations of _why_ something works or _what it means in practice_ when the source provides them.
+- Dedicate a separate slide to each definition, formula, or diagram with a concrete example or intuitive explanation.
 - Reproduce source tables using Markdown table syntax.
 - Use an active tone — write informative sentences, not bare noun phrases.
 - Each slide must be self-contained enough for a reader unfamiliar with the source to understand the concept.
+- Slide count: usually 10–18; generate more slides when word limits require it.
 
 **Output:** Write the result to `presentations/<SECTION>/<SECTION>.md`, creating the folder if needed. Replace the file if it already exists.
 
-**Review before saving:** verify coverage of all key concepts, Polish spelling and grammar, and consistent use of English term names. Fix any issues found.
+**Review before saving:** verify coverage of all key concepts, word limits on all slides, Polish spelling and grammar, and consistent use of English term names.
 
 ## Stage 2 — PDF generation
 
@@ -42,4 +69,4 @@ Run immediately after Stage 1 completes:
 node presentations/presentation-generator/generate.js <SECTION>
 ```
 
-This script reads `presentations/<SECTION>/<SECTION>.md` and produces `presentations/<SECTION>/<SECTION>.pdf` using the shared generator in `presentations/presentation-generator/`.
+This script reads `presentations/<SECTION>/<SECTION>.md` and produces `presentations/<SECTION>/<SECTION>.pdf`.

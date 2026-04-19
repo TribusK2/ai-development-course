@@ -912,173 +912,287 @@ section.slide hr {
 </head>
 <body>
 <section class="slide">
-<h1>1.2 Przegląd modeli: Różnice między GPT-4o, Claude 3.5 Sonnet a modelami lokalnymi (Llama 3)</h1>
+<h1>1.4 API First: Integracja z OpenAI API i Anthropic API (autoryzacja, koszty, parametry temperature/top_p)</h1>
 <p><strong>Moduł 1: Fundamenty i Mechanizmy LLM</strong></p>
 <p>Krzysztof Rytlewski · 2026</p>
 
 </section>
 <section class="slide">
-<h2>Krajobraz modeli językowych — orientacja w terenie</h2>
-<p>Świat LLM zmienia się w zawrotnym tempie. Dla AI developera kluczowe jest nie tyle znanie każdego benchmarku, co <strong>rozumienie osi decyzyjnych</strong>: kiedy sięgnąć po GPT-4o, kiedy po Claude 3.5 Sonnet, a kiedy uruchomić model lokalnie.</p>
-<p>Główne kryteria podziału modeli:</p>
+<h2>Podejście API First</h2>
+<p><strong>API First</strong> oznacza traktowanie interfejsu programistycznego jako produktu pierwszej klasy — jest projektowany i dokumentowany przed implementacją pozostałych warstw systemu.</p>
+<p>W kontekście LLM to świadome odseparowanie modelu (inteligencji) od aplikacji i komunikacja wyłącznie przez dobrze zdefiniowany kontrakt HTTP. Zmiana dostawcy (GPT-4o → Claude) powinna wymagać korekty kilku linii kodu, nie przepisania aplikacji. Dobra warstwa abstrakcji nad API LLM to różnica między projektem, który można utrzymywać, a projektem nie do ruszenia po roku.</p>
+<p><strong>Kluczowe pojęcia:</strong></p>
 <ul>
-<li><strong>Dostęp:</strong> API w chmurze (OpenAI, Anthropic, Google) vs. modele open-weight uruchamiane lokalnie (Llama, Mistral, Phi)</li>
-<li><strong>Rozmiar:</strong> liczba parametrów — od kilku miliardów (7B, 8B) do setek miliardów</li>
-<li><strong>Specjalizacja:</strong> modele ogólne vs. dedykowane (kod, matematyka, medycyna)</li>
-<li><strong>Koszt licencji:</strong> modele komercyjne z zamkniętymi wagami vs. otwarte (open-weight)</li>
+<li><strong>Endpoint</strong> — adres URL przyjmujący żądania (np. <code>https://api.openai.com/v1/chat/completions</code>)</li>
+<li><strong>Rate limit</strong> — limit żądań lub tokenów na jednostkę czasu, nakładany przez dostawcę</li>
+<li><strong>Zasada bezpieczeństwa</strong> — klucze API nigdy nie opuszczają backendu; wywołanie z przeglądarki naraża klucz na kradzież przez DevTools</li>
 </ul>
 
 </section>
 <section class="slide">
-<h2>GPT-4o — multimodalny model flagowy OpenAI</h2>
-<p><strong>GPT-4o</strong> (<em>omni</em>) łączy rozumienie tekstu, obrazów i dźwięku w jednym modelu end-to-end.</p>
-<p>Mocne strony:</p>
-<ul>
-<li>Doskonałe rozumowanie wieloetapowe i realizacja złożonych poleceń</li>
-<li>Natywna obsługa obrazów — analiza zrzutów ekranu, diagramów, kodu ze zdjęć</li>
-<li>Bardzo duże okno kontekstowe — 128 000 tokenów</li>
-<li>Dojrzała integracja z ekosystemem OpenAI: Assistants API, function calling, batch processing</li>
-</ul>
-<p>Ograniczenia:</p>
-<ul>
-<li>Zamknięte wagi — brak lokalnego uruchomienia ani swobodnego fine-tuningu poza API</li>
-<li>Koszty wywołań mogą szybko rosnąć przy dużej skali</li>
-</ul>
-<p><strong>Kiedy wybrać:</strong> produkcyjne aplikacje wymagające niezawodności, multimodalność (obraz + tekst), integracje z ekosystemem OpenAI.</p>
-
-</section>
-<section class="slide">
-<h2>Claude 3.5 Sonnet — model Anthropic i Constitutional AI</h2>
-<p><strong>Claude 3.5 Sonnet</strong> wyróżnia się cechami istotnymi dla zastosowań biznesowych i deweloperskich.</p>
-<ul>
-<li><strong>Okno kontekstowe 200 000 tokenów</strong> — umożliwia analizę całych repozytoriów kodu lub długich dokumentów prawnych w jednym wywołaniu</li>
-<li><strong>Wyjątkowa jakość kodu</strong> — w benchmarku SWE-bench osiągał czołowe wyniki spośród modeli komercyjnych</li>
-<li><strong>Constitutional AI</strong> — technika trenowania oparta na zestawie zasad etycznych; w praktyce zwiększa przewidywalność i zmniejsza halucynacje</li>
-<li><strong>Niezawodne śledzenie długich instrukcji</strong> — model rzadziej „gubi&quot; kontekst z początku długiego promptu</li>
-</ul>
-<p><strong>Kiedy wybrać:</strong> analiza dużych ilości kodu lub dokumentów, generowanie i refaktoryzacja kodu, aplikacje wymagające wysokiej spójności i niezawodności.</p>
-
-</section>
-<section class="slide">
-<h2>Llama 3 i modele open-weight — wolność i odpowiedzialność</h2>
-<p><strong>Llama 3</strong> (Meta AI) to rodzina modeli open-weight dostępna w wariantach 8B, 70B i 405B parametrów. Kluczowa cecha: <strong>uruchamiają się lokalnie</strong>.</p>
-<p>Zalety:</p>
-<ul>
-<li><strong>Prywatność danych</strong> — żadne dane nie opuszczają własnej infrastruktury; kluczowe w sektorach regulowanych (zdrowie, finanse, prawo)</li>
-<li><strong>Brak opłat per token</strong> — koszt to infrastruktura (GPU/CPU), nie subskrypcja API</li>
-<li><strong>Pełna kontrola</strong> — możliwość fine-tuningu na własnych danych i integracji z dowolną infrastrukturą</li>
-</ul>
-<p>Ograniczenia:</p>
-<ul>
-<li>Wymagają GPU: model 8B potrzebuje 8–16 GB VRAM; 70B wymaga konfiguracji wielokartowej lub kwantyzacji</li>
-<li>Jakość generowania zazwyczaj niższa niż flagowych modeli komercyjnych, choć różnica z generacji na generację maleje</li>
-</ul>
-
-</section>
-<section class="slide">
-<h2>Narzędzia do uruchamiania modeli lokalnych</h2>
-<p>Uruchomienie modeli lokalnych jest dziś proste dzięki dedykowanym narzędziom:</p>
-<ul>
-<li><strong>Ollama</strong> — najprostsza metoda: model uruchamia się jedną komendą w terminalu; automatycznie wystawia API kompatybilne z OpenAI</li>
-<li><strong>LM Studio</strong> — graficzny interfejs z wbudowanym serwerem API; idealny do eksploracji i testowania modeli bez pisania kodu</li>
-<li><strong>vLLM</strong> — wydajny serwer inferencji klasy produkcyjnej; obsługuje batching i wysoką przepustowość dla środowisk serwerowych</li>
-</ul>
-<p>Wszystkie trzy narzędzia wystawiają API kompatybilne z OpenAI, co umożliwia przełączanie między modelem lokalnym a chmurowym bez zmiany kodu aplikacji.</p>
-
-</section>
-<section class="slide">
-<h2>Porównanie modeli — tabela zestawcza</h2>
+<h2>Autoryzacja — klucze API i dobre praktyki bezpieczeństwa</h2>
+<p>Zarówno OpenAI, jak i Anthropic używają <strong>Bearer token authentication</strong> — klucz jest przekazywany w nagłówku HTTP przy każdym żądaniu.</p>
 <table>
 <thead>
 <tr>
-<th>Cecha</th>
-<th>GPT-4o</th>
-<th>Claude 3.5 Sonnet</th>
-<th>Llama 3 (70B)</th>
+<th>Dostawca</th>
+<th>Nagłówek autoryzacji</th>
+<th>Dodatkowe nagłówki</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><strong>Producent</strong></td>
 <td>OpenAI</td>
+<td><code>Authorization: Bearer sk-...</code></td>
+<td>(opcjonalnie) <code>OpenAI-Organization</code></td>
+</tr>
+<tr>
 <td>Anthropic</td>
-<td>Meta AI</td>
+<td><code>x-api-key: sk-ant-...</code></td>
+<td><code>anthropic-version: 2023-06-01</code> (wymagany)</td>
+</tr>
+</tbody></table>
+<p>Dobre praktyki przechowywania kluczy:</p>
+<ul>
+<li><strong>Dev/staging</strong> — zmienne środowiskowe w pliku <code>.env</code> (nigdy nie commituj do repozytorium; dodaj do <code>.gitignore</code>)</li>
+<li><strong>Produkcja (AWS)</strong> — AWS Secrets Manager lub AWS Parameter Store, nigdy w <code>docker-compose.yml</code> ani w kodzie</li>
+<li>Twórz osobne klucze dla każdego środowiska (dev/staging/prod) i rotuj je regularnie</li>
+</ul>
+
+</section>
+<section class="slide">
+<h2>Wywołanie OpenAI Chat Completions API</h2>
+<p>Minimalne wywołanie OpenAI Chat Completions API w Node.js — wiadomości przesyłane są jako tablica z rolami <code>system</code>, <code>user</code> i <code>assistant</code>:</p>
+<pre><code class="language-javascript">const response = await openai.chat.completions.create({
+  model: &#39;gpt-4o&#39;,
+  messages: [
+    { role: &#39;system&#39;, content: &#39;Jesteś pomocnym asystentem programisty.&#39; },
+    { role: &#39;user&#39;,   content: &#39;Wyjaśnij różnicę między Promise a async/await.&#39; }
+  ],
+  max_tokens: 512,
+  temperature: 0.7,
+});
+console.log(response.choices[0].message.content);
+console.log(response.usage); // { prompt_tokens, completion_tokens, total_tokens }
+</code></pre>
+
+</section>
+<section class="slide">
+<h2>Wywołanie Anthropic Messages API</h2>
+<p>Anthropic API różni się strukturą — system prompt jest <strong>osobnym polem</strong> na najwyższym poziomie żądania:</p>
+<pre><code class="language-javascript">const response = await anthropic.messages.create({
+  model: &#39;claude-3-5-sonnet-20241022&#39;,
+  max_tokens: 512,
+  system: &#39;Jesteś pomocnym asystentem programisty.&#39;,
+  messages: [
+    { role: &#39;user&#39;, content: &#39;Wyjaśnij różnicę między Promise a async/await.&#39; }
+  ],
+});
+console.log(response.content[0].text);
+console.log(response.usage); // { input_tokens, output_tokens }
+</code></pre>
+<p>Ważne: wiadomości w historii muszą być <strong>naprzemienne</strong> (user → assistant → user…). Dwie wiadomości <code>user</code> pod rząd spowodują błąd walidacji w API Anthropic.</p>
+
+</section>
+<section class="slide">
+<h2>Kluczowe różnice strukturalne między API</h2>
+<table>
+<thead>
+<tr>
+<th>Aspekt</th>
+<th>OpenAI</th>
+<th>Anthropic</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>System prompt</td>
+<td>Wiadomość <code>{ role: &#39;system&#39;, ... }</code></td>
+<td>Osobne pole <code>system: &quot;...&quot;</code></td>
 </tr>
 <tr>
-<td><strong>Okno kontekstowe</strong></td>
-<td>128 000 tokenów</td>
-<td>200 000 tokenów</td>
-<td>Do 131 072 tokenów</td>
+<td>Odpowiedź</td>
+<td><code>response.choices[0].message.content</code></td>
+<td><code>response.content[0].text</code></td>
 </tr>
 <tr>
-<td><strong>Dostęp</strong></td>
-<td>API w chmurze</td>
-<td>API w chmurze</td>
-<td>Lokalne / własna chmura</td>
+<td>Tokeny wejściowe</td>
+<td><code>response.usage.prompt_tokens</code></td>
+<td><code>response.usage.input_tokens</code></td>
 </tr>
 <tr>
-<td><strong>Prywatność danych</strong></td>
-<td>Wysyłane do OpenAI</td>
-<td>Wysyłane do Anthropic</td>
-<td>W pełni lokalna</td>
+<td>Wymagany nagłówek</td>
+<td>Brak</td>
+<td><code>anthropic-version</code> (zawsze)</td>
 </tr>
 <tr>
-<td><strong>Multimodalność</strong></td>
-<td>Tekst, obraz, dźwięk</td>
-<td>Tekst, obraz</td>
-<td>Tekst (warianty Vision)</td>
+<td>Naprzemienność ról</td>
+<td>Zalecana</td>
+<td>Ściśle wymagana</td>
+</tr>
+</tbody></table>
+<p>Modele nie mają wbudowanej pamięci — to deweloper przechowuje historię konwersacji i przesyła ją przy każdym kolejnym wywołaniu API.</p>
+
+</section>
+<section class="slide">
+<h2>Parametry generowania — Temperature</h2>
+<p><strong>Temperature</strong> skaluje rozkład prawdopodobieństwa nad słownikiem tokenów przed próbkowaniem:</p>
+<ul>
+<li><strong>temperature = 0.0</strong> — zawsze wybiera token z najwyższym prawdopodobieństwem; zachowanie deterministyczne. Idealne do zadań faktograficznych, parsowania, generowania kodu</li>
+<li><strong>temperature ≈ 0.7</strong> — złoty środek dla asystentów; odpowiedzi są konkretne, ale nie sztywne</li>
+<li><strong>temperature ≈ 1.2–2.0</strong> — wysoka losowość, odpowiedź bywa nieprzewidywalna; używane w kreatywnym pisaniu i brainstormingu</li>
+</ul>
+<p>Ważna zasada: <strong>nie używaj jednocześnie wysokiej temperatury i top_p</strong> — modele są kalibrowane do pracy z jednym z tych parametrów ustawionym blisko wartości domyślnej.</p>
+
+</section>
+<section class="slide">
+<h2>Top-p i tabela praktycznych ustawień</h2>
+<p><strong>Top-p</strong> (nucleus sampling) — model bierze pod uwagę tylko tokeny odpowiadające za minimalny skumulowany zakres prawdopodobieństwa <code>p</code>. Przy <code>top_p = 0.9</code> odcinany jest ogon mało prawdopodobnych, często dziwnych tokenów.</p>
+<table>
+<thead>
+<tr>
+<th>Zastosowanie</th>
+<th>temperature</th>
+<th>top_p</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Generowanie kodu</td>
+<td>0.0–0.2</td>
+<td>1.0</td>
 </tr>
 <tr>
-<td><strong>Fine-tuning</strong></td>
-<td>Ograniczony przez API</td>
-<td>Niedostępny</td>
-<td>Pełny dostęp</td>
+<td>Ekstrakcja danych / JSON</td>
+<td>0.0</td>
+<td>1.0</td>
 </tr>
 <tr>
-<td><strong>Koszt użycia</strong></td>
-<td>Per token</td>
-<td>Per token</td>
-<td>Infrastruktura własna</td>
+<td>Q&amp;A / asystent</td>
+<td>0.7</td>
+<td>1.0</td>
 </tr>
 <tr>
-<td><strong>Jakość kodu</strong></td>
-<td>Bardzo wysoka</td>
-<td>Bardzo wysoka</td>
-<td>Wysoka (70B+)</td>
+<td>Copywriting</td>
+<td>1.0</td>
+<td>0.95</td>
+</tr>
+<tr>
+<td>Kreatywne pisanie</td>
+<td>1.2–1.5</td>
+<td>0.9</td>
 </tr>
 </tbody></table>
 
 </section>
 <section class="slide">
-<h2>Benchmarki — co mierzą i jak je czytać</h2>
+<h2>Inne ważne parametry generowania</h2>
 <ul>
-<li><strong>MMLU</strong> — wiedza ogólna i rozumowanie w 57 dziedzinach; miernik „encyklopedyczności&quot; modelu</li>
-<li><strong>HumanEval / MBPP</strong> — rozwiązywanie zadań algorytmicznych; benchmark jakości generowania kodu</li>
-<li><strong>SWE-bench</strong> — realne bugi z GitHuba do naprawienia; najbardziej praktyczny benchmark dla AI developera</li>
-<li><strong>GPQA</strong> — pytania z fizyki, chemii i biologii na poziomie doktoratu; mierzy głębokie rozumowanie</li>
+<li><strong><code>max_tokens</code></strong> — twardy limit tokenów odpowiedzi; niezużyte tokeny nie są naliczane, ale limit nie gwarantuje konkretnej długości — ustaw go rozsądnie</li>
+<li><strong><code>stop</code></strong> — lista ciągów znaków przerywających generowanie (np. <code>[&quot;###&quot;, &quot;\n\n&quot;]</code>); przydatne przy generowaniu strukturyzowanego tekstu</li>
+<li><strong><code>frequency_penalty</code></strong> / <strong><code>presence_penalty</code></strong> (OpenAI) — kary za powtarzanie tokenów; zmniejszają tendencję modelu do zapętlania podobnych fraz</li>
 </ul>
-<p>Benchmarki mogą wprowadzać w błąd przez <strong>data contamination</strong> (modele trenowane na zestawach testowych) oraz słabą przeliczalność wyników na konkretne zadania.</p>
-<p><strong>Rekomendacja:</strong> testuj model na własnym zestawie promptów reprezentatywnych dla projektu — godzina testów własnoręcznych daje więcej informacji niż dziesiątki artykułów porównawczych.</p>
+<p>Dobieranie tych parametrów pozwala precyzyjnie kształtować wyjście modelu bez zmiany systemu promptów ani modelu bazowego.</p>
 
 </section>
 <section class="slide">
-<h2>Strategia wyboru modelu — model routing</h2>
-<p>W praktyce wiele projektów korzysta z <strong>kombinacji modeli</strong> dopasowanych do zadania (<em>model routing</em>):</p>
-<ul>
-<li><strong>Szybkie, tanie zadania</strong> (klasyfikacja, ekstrakcja, formatowanie) → <code>gpt-4o-mini</code> lub mały model lokalny</li>
-<li><strong>Złożone rozumowanie i generowanie kodu</strong> → GPT-4o lub Claude 3.5 Sonnet</li>
-<li><strong>Dokumenty wrażliwe, dane regulowane</strong> → Llama 3 lokalnie</li>
-<li><strong>Fine-tuning do wąskiej domeny</strong> → otwarty model (Llama, Mistral) dotrenowany na własnych danych</li>
-</ul>
-<p>Decyzja to kompromis między <strong>jakością</strong>, <strong>kosztem</strong>, <strong>prywatnością</strong> i <strong>kontrolą</strong>. Świadomy AI developer potrafi uzasadnić ten wybór wobec klienta i zespołu.</p>
+<h2>Koszty — model pay-per-token i szacowanie</h2>
+<p>LLM API rozliczane są w modelu <strong>pay-per-token</strong> — osobna stawka za tokeny wejściowe (prompt) i wyjściowe (completion). Tokeny wyjściowe kosztują zazwyczaj <strong>3–5× więcej</strong> niż wejściowe.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Wejście (/ 1M)</th>
+<th>Wyjście (/ 1M)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPT-4o</td>
+<td>~<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2.50</mn><mi mathvariant="normal">∣</mi><mtext> </mtext></mrow><annotation encoding="application/x-tex">2.50 | ~</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">2.50∣</span><span class="mspace nobreak"> </span></span></span></span>10.00</td>
+<td></td>
+</tr>
+<tr>
+<td>GPT-4o mini</td>
+<td>~<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.15</mn><mi mathvariant="normal">∣</mi><mtext> </mtext></mrow><annotation encoding="application/x-tex">0.15 | ~</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0.15∣</span><span class="mspace nobreak"> </span></span></span></span>0.60</td>
+<td></td>
+</tr>
+<tr>
+<td>Claude 3.5 Sonnet</td>
+<td>~<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3.00</mn><mi mathvariant="normal">∣</mi><mtext> </mtext></mrow><annotation encoding="application/x-tex">3.00 | ~</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">3.00∣</span><span class="mspace nobreak"> </span></span></span></span>15.00</td>
+<td></td>
+</tr>
+<tr>
+<td>Claude 3 Haiku</td>
+<td>~<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.25</mn><mi mathvariant="normal">∣</mi><mtext> </mtext></mrow><annotation encoding="application/x-tex">0.25 | ~</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0.25∣</span><span class="mspace nobreak"> </span></span></span></span>1.25</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>Monitoruj zużycie tokenów przy każdym wywołaniu (<code>response.usage</code>) i ustal limity budżetowe w dashboardach OpenAI/Anthropic.</p>
 
 </section>
 <section class="slide">
-<h2>Kluczowe wnioski — sekcja 1.2</h2>
+<h2>Strategie redukcji kosztów</h2>
+<ol>
+<li><strong>Dobór modelu do zadania</strong> — nie używaj GPT-4o do prostej klasyfikacji, gdy GPT-4o mini radzi sobie równie dobrze za 20× niższą cenę</li>
+<li><strong>Skracanie system promptów</strong> — każdy prompt powtarzany jest przy każdym wywołaniu; 500 zbędnych tokenów × 10 000 wywołań dziennie = 5 mln tokenów</li>
+<li><strong>Prompt caching</strong> — Anthropic i OpenAI oferują cachowanie powtarzalnych fragmentów kontekstu; cached tokeny kosztują ~10% normalnej ceny</li>
+<li><strong>Ograniczanie <code>max_tokens</code></strong> — modele generują aż do limitu; ustaw rozsądny pułap dopasowany do zadania</li>
+<li><strong>Streaming z przerwaniem</strong> — generowanie można zatrzymać wcześniej, gdy użytkownik otrzymał wystarczające informacje</li>
+</ol>
+
+</section>
+<section class="slide">
+<h2>Obsługa błędów i retry z exponential backoff</h2>
+<table>
+<thead>
+<tr>
+<th>Kod HTTP</th>
+<th>Znaczenie</th>
+<th>Działanie</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>400</code></td>
+<td>Błędny format żądania</td>
+<td>Sprawdź strukturę <code>messages</code>; nie ponów</td>
+</tr>
+<tr>
+<td><code>401</code></td>
+<td>Nieprawidłowy klucz API</td>
+<td>Sprawdź zmienne środowiskowe; nie ponów</td>
+</tr>
+<tr>
+<td><code>429</code></td>
+<td>Przekroczono rate limit</td>
+<td>Poczekaj i ponów z backoffem</td>
+</tr>
+<tr>
+<td><code>500 / 503</code></td>
+<td>Błąd po stronie dostawcy</td>
+<td>Ponów z backoffem</td>
+</tr>
+</tbody></table>
+<p><strong>Exponential backoff</strong> — przy błędach <code>429</code> i <code>5xx</code> ponów żądanie po opóźnieniu rosnącym wykładniczo (<code>1s</code>, <code>2s</code>, <code>4s</code>…) z dodaną losowością (<em>jitter</em>), aby unikać synchronizacji wielu klientów. Oficjalne SDK (<code>openai</code>, <code>@anthropic-ai/sdk</code>) mają tę logikę wbudowaną automatycznie.</p>
+
+</section>
+<section class="slide">
+<h2>Streaming — tokeny w czasie rzeczywistym</h2>
+<p><strong>Streaming</strong> pozwala odbierać tokeny na bieżąco zamiast czekać na pełną odpowiedź. Poprawia UX i umożliwia wcześniejsze przerwanie generowania, co obniża koszty tokenów wyjściowych.</p>
+<pre><code class="language-javascript">const stream = await openai.chat.completions.create({
+  model: &#39;gpt-4o&#39;, messages, stream: true,
+});
+for await (const chunk of stream) {
+  const delta = chunk.choices[0]?.delta?.content ?? &#39;&#39;;
+  process.stdout.write(delta); // lub push do WebSocket / SSE
+}
+</code></pre>
+
+</section>
+<section class="slide">
+<h2>Kluczowe wnioski — sekcja 1.4</h2>
 <ul>
-<li>Nie istnieje jeden „najlepszy&quot; model — każdy ma inne mocne strony, a wybór zależy od wymagań projektu</li>
-<li>GPT-4o: niezawodność, multimodalność, dojrzały ekosystem; Claude 3.5 Sonnet: długi kontekst, precyzja instrukcji, jakość kodu</li>
-<li>Modele open-weight (Llama 3) zapewniają pełną prywatność i kontrolę, kosztem zarządzania własną infrastrukturą</li>
-<li>Produkcyjne systemy coraz częściej stosują routing modeli — różne modele do różnych zadań w zależności od kosztu i wymaganej jakości odpowiedzi</li>
+<li>Klucze API przechowuj wyłącznie po stronie serwera — nigdy w kodzie klienta ani w repozytorium</li>
+<li>Zrozumienie <code>temperature</code> i <code>top_p</code> pozwala świadomie dobierać ustawienia do zadania: deterministyczność dla kodu, kreatywność dla pisania</li>
+<li>Model pay-per-token wymaga ciągłego monitorowania kosztów — tokeny wyjściowe kosztują 3–5× więcej niż wejściowe</li>
+<li>Warstwa abstrakcji nad API LLM (adapter) umożliwia przełączanie dostawców bez zmian w logice aplikacji</li>
+<li>Obsługa błędów z retry i backoffem oraz streaming to cechy dojrzałego, produkcyjnego kodu integrującego się z LLM</li>
 </ul>
 
 </section>

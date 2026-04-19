@@ -29,12 +29,41 @@ const mdContent = fs.readFileSync(mdPath, 'utf8');
 // Normalise line endings (Windows CRLF → LF) before splitting
 const mdNormalised = mdContent.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
+// Server-side math rendering via katex.renderToString
+// Pre-process BEFORE marked so that backslashes/underscores inside $...$ are
+// not mangled by the Markdown parser.
+const katexNode = require(path.resolve(root, 'node_modules', 'katex'));
+
+function applyMath(slideText) {
+  const rendered = [];
+
+  // 1. Block display math  $$...$$  (must come before inline to avoid double-match)
+  let out = slideText.replace(/\$\$([\s\S]+?)\$\$/g, (_, formula) => {
+    rendered.push(katexNode.renderToString(formula.trim(), { displayMode: true, throwOnError: false }));
+    return `KATEXDISPLAY${rendered.length - 1}END`;
+  });
+
+  // 2. Inline math  $...$  (single-line formulas only)
+  out = out.replace(/\$([^$\n]+?)\$/g, (_, formula) => {
+    rendered.push(katexNode.renderToString(formula.trim(), { throwOnError: false }));
+    return `KATEXINLINE${rendered.length - 1}END`;
+  });
+
+  // Run markdown → HTML on the placeholder-substituted source
+  let html = marked.parse(out);
+
+  // Restore rendered math HTML
+  html = html.replace(/KATEXDISPLAY(\d+)END/g, (_, i) => rendered[+i]);
+  html = html.replace(/KATEXINLINE(\d+)END/g,  (_, i) => rendered[+i]);
+  return html;
+}
+
 // Split into individual slides on ---
 const slideTexts = mdNormalised.split(/\n---\n/);
 
 // Convert each slide to HTML and wrap in <section class="slide">
 const slidesHtml = slideTexts
-  .map(slideText => `<section class="slide">\n${marked.parse(slideText.trim())}\n</section>`)
+  .map(slideText => `<section class="slide">\n${applyMath(slideText.trim())}\n</section>`)
   .join('\n');
 
 // Read template and inject slides + inlined CSS
@@ -46,6 +75,15 @@ template = template.replace(
   '<link rel="stylesheet" href="STYLES_PLACEHOLDER">',
   `<style>\n${cssContent}\n</style>`
 );
+
+// Inline KaTeX CSS from local node_modules (fix font URLs to absolute file:// paths)
+// JS is not needed since math is pre-rendered server-side.
+const katexRoot = path.resolve(root, 'node_modules', 'katex', 'dist');
+const katexFontsUrl = 'file:///' + path.join(katexRoot, 'fonts').replace(/\\/g, '/') + '/';
+let katexCss = fs.readFileSync(path.join(katexRoot, 'katex.min.css'), 'utf8');
+katexCss = katexCss.replace(/url\(fonts\//g, `url(${katexFontsUrl}`);
+template = template.replace('<!-- KATEX_CSS -->', `<style>\n${katexCss}\n</style>`);
+template = template.replace('<!-- KATEX_JS -->', ''); // No browser-side KaTeX JS needed
 
 // Inject slides
 template = template.replace('<!-- SLIDES -->', slidesHtml);

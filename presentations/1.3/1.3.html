@@ -912,173 +912,148 @@ section.slide hr {
 </head>
 <body>
 <section class="slide">
-<h1>1.2 Przegląd modeli: Różnice między GPT-4o, Claude 3.5 Sonnet a modelami lokalnymi (Llama 3)</h1>
+<h1>1.3 Zaawansowany Prompt Engineering: Chain-of-Thought, System Prompts i techniki ograniczania halucynacji</h1>
 <p><strong>Moduł 1: Fundamenty i Mechanizmy LLM</strong></p>
 <p>Krzysztof Rytlewski · 2026</p>
 
 </section>
 <section class="slide">
-<h2>Krajobraz modeli językowych — orientacja w terenie</h2>
-<p>Świat LLM zmienia się w zawrotnym tempie. Dla AI developera kluczowe jest nie tyle znanie każdego benchmarku, co <strong>rozumienie osi decyzyjnych</strong>: kiedy sięgnąć po GPT-4o, kiedy po Claude 3.5 Sonnet, a kiedy uruchomić model lokalnie.</p>
-<p>Główne kryteria podziału modeli:</p>
+<h2>Prompt Engineering — definicja i znaczenie</h2>
+<p><strong>Prompt engineering</strong> to sztuka i nauka formułowania zapytań do modeli językowych w taki sposób, aby uzyskać odpowiedzi wysokiej jakości, spójne z oczekiwaniami i wolne od błędów. Łączy wiedzę o architekturze LLM, psychologię komunikacji i inżynierię oprogramowania.</p>
+<p>Ten sam model, przy identycznych wagach, może dać diametralnie różne wyniki w zależności od sformułowania promptu. Dodanie frazy <em>„Let&#39;s think step by step&quot;</em> zwiększyło dokładność modeli na zadaniach matematycznych o kilkadziesiąt procent — bez żadnej zmiany architektury.</p>
+<p><strong>Trzy warstwy promptu:</strong></p>
 <ul>
-<li><strong>Dostęp:</strong> API w chmurze (OpenAI, Anthropic, Google) vs. modele open-weight uruchamiane lokalnie (Llama, Mistral, Phi)</li>
-<li><strong>Rozmiar:</strong> liczba parametrów — od kilku miliardów (7B, 8B) do setek miliardów</li>
-<li><strong>Specjalizacja:</strong> modele ogólne vs. dedykowane (kod, matematyka, medycyna)</li>
-<li><strong>Koszt licencji:</strong> modele komercyjne z zamkniętymi wagami vs. otwarte (open-weight)</li>
+<li><strong>System prompt</strong> — instrukcje definiujące rolę, styl i ograniczenia modelu</li>
+<li><strong>Few-shot examples</strong> — przykłady par wejście–wyjście pokazujące pożądane zachowanie</li>
+<li><strong>User turn</strong> — właściwe zapytanie użytkownika</li>
 </ul>
 
 </section>
 <section class="slide">
-<h2>GPT-4o — multimodalny model flagowy OpenAI</h2>
-<p><strong>GPT-4o</strong> (<em>omni</em>) łączy rozumienie tekstu, obrazów i dźwięku w jednym modelu end-to-end.</p>
-<p>Mocne strony:</p>
+<h2>System Prompts — definiowanie roli i granic modelu</h2>
+<p><strong>System prompt</strong> to specjalna część kontekstu widoczna przez modelem przed pierwszą wiadomością użytkownika. Przekazywany jest jako wiadomość z rolą <code>system</code> w API OpenAI i Anthropic.</p>
+<p>Cel system promptu:</p>
 <ul>
-<li>Doskonałe rozumowanie wieloetapowe i realizacja złożonych poleceń</li>
-<li>Natywna obsługa obrazów — analiza zrzutów ekranu, diagramów, kodu ze zdjęć</li>
-<li>Bardzo duże okno kontekstowe — 128 000 tokenów</li>
-<li>Dojrzała integracja z ekosystemem OpenAI: Assistants API, function calling, batch processing</li>
+<li><strong>Rola i persona</strong> — np. „jesteś doświadczonym senior developerem Pythona&quot;</li>
+<li><strong>Format odpowiedzi</strong> — „zawsze odpowiadaj w formacie Markdown z nagłówkami H2&quot;</li>
+<li><strong>Ograniczenia</strong> — „nie odpowiadaj na pytania niezwiązane z programowaniem&quot;</li>
+<li><strong>Ton i styl</strong> — „mów bezpośrednio, unikaj zbędnych wstępów i podsumowań&quot;</li>
+<li><strong>Kontekst domenowy</strong> — firmowe zasady, pojęcia branżowe, struktura kodu</li>
 </ul>
-<p>Ograniczenia:</p>
-<ul>
-<li>Zamknięte wagi — brak lokalnego uruchomienia ani swobodnego fine-tuningu poza API</li>
-<li>Koszty wywołań mogą szybko rosnąć przy dużej skali</li>
-</ul>
-<p><strong>Kiedy wybrać:</strong> produkcyjne aplikacje wymagające niezawodności, multimodalność (obraz + tekst), integracje z ekosystemem OpenAI.</p>
+<p>System prompt to <strong>kontrakt</strong> między deweloperem a modelem. Jego jakość bezpośrednio przekłada się na jakość i przewidywalność całej aplikacji.</p>
 
 </section>
 <section class="slide">
-<h2>Claude 3.5 Sonnet — model Anthropic i Constitutional AI</h2>
-<p><strong>Claude 3.5 Sonnet</strong> wyróżnia się cechami istotnymi dla zastosowań biznesowych i deweloperskich.</p>
-<ul>
-<li><strong>Okno kontekstowe 200 000 tokenów</strong> — umożliwia analizę całych repozytoriów kodu lub długich dokumentów prawnych w jednym wywołaniu</li>
-<li><strong>Wyjątkowa jakość kodu</strong> — w benchmarku SWE-bench osiągał czołowe wyniki spośród modeli komercyjnych</li>
-<li><strong>Constitutional AI</strong> — technika trenowania oparta na zestawie zasad etycznych; w praktyce zwiększa przewidywalność i zmniejsza halucynacje</li>
-<li><strong>Niezawodne śledzenie długich instrukcji</strong> — model rzadziej „gubi&quot; kontekst z początku długiego promptu</li>
-</ul>
-<p><strong>Kiedy wybrać:</strong> analiza dużych ilości kodu lub dokumentów, generowanie i refaktoryzacja kodu, aplikacje wymagające wysokiej spójności i niezawodności.</p>
+<h2>Praktyczne wskazówki dla System Promptów</h2>
+<ol>
+<li><strong>Bądź konkretny, nie abstrakcyjny</strong> — „Odpowiedź ma mieć maksymalnie 3 akapity&quot; działa lepiej niż „Bądź zwięzły&quot;</li>
+<li><strong>Definiuj personę przez zachowanie</strong> — zamiast „jesteś pomocny&quot; napisz „zawsze sugerujesz następny krok działania&quot;</li>
+<li><strong>Testuj negatywne przypadki</strong> — sprawdzaj, czy model respektuje ograniczenia przy próbach ich obejścia przez użytkownika</li>
+<li><strong>Wersjonuj system prompty jak kod</strong> — każda zmiana powinna być śledzona w repozytorium ze zrozumiałym opisem powodu modyfikacji</li>
+</ol>
 
 </section>
 <section class="slide">
-<h2>Llama 3 i modele open-weight — wolność i odpowiedzialność</h2>
-<p><strong>Llama 3</strong> (Meta AI) to rodzina modeli open-weight dostępna w wariantach 8B, 70B i 405B parametrów. Kluczowa cecha: <strong>uruchamiają się lokalnie</strong>.</p>
-<p>Zalety:</p>
-<ul>
-<li><strong>Prywatność danych</strong> — żadne dane nie opuszczają własnej infrastruktury; kluczowe w sektorach regulowanych (zdrowie, finanse, prawo)</li>
-<li><strong>Brak opłat per token</strong> — koszt to infrastruktura (GPU/CPU), nie subskrypcja API</li>
-<li><strong>Pełna kontrola</strong> — możliwość fine-tuningu na własnych danych i integracji z dowolną infrastrukturą</li>
-</ul>
-<p>Ograniczenia:</p>
-<ul>
-<li>Wymagają GPU: model 8B potrzebuje 8–16 GB VRAM; 70B wymaga konfiguracji wielokartowej lub kwantyzacji</li>
-<li>Jakość generowania zazwyczaj niższa niż flagowych modeli komercyjnych, choć różnica z generacji na generację maleje</li>
-</ul>
-
-</section>
-<section class="slide">
-<h2>Narzędzia do uruchamiania modeli lokalnych</h2>
-<p>Uruchomienie modeli lokalnych jest dziś proste dzięki dedykowanym narzędziom:</p>
-<ul>
-<li><strong>Ollama</strong> — najprostsza metoda: model uruchamia się jedną komendą w terminalu; automatycznie wystawia API kompatybilne z OpenAI</li>
-<li><strong>LM Studio</strong> — graficzny interfejs z wbudowanym serwerem API; idealny do eksploracji i testowania modeli bez pisania kodu</li>
-<li><strong>vLLM</strong> — wydajny serwer inferencji klasy produkcyjnej; obsługuje batching i wysoką przepustowość dla środowisk serwerowych</li>
-</ul>
-<p>Wszystkie trzy narzędzia wystawiają API kompatybilne z OpenAI, co umożliwia przełączanie między modelem lokalnym a chmurowym bez zmiany kodu aplikacji.</p>
-
-</section>
-<section class="slide">
-<h2>Porównanie modeli — tabela zestawcza</h2>
+<h2>Chain-of-Thought — model myśli krok po kroku</h2>
+<p><strong>Chain-of-Thought (CoT)</strong> to technika, w której model jest zachęcany do zapisania toku rozumowania prowadzącego do odpowiedzi, zamiast podania jej bezpośrednio. LLM rozwiązują trudniejsze zadania znacznie skuteczniej, gdy „myślą na głos&quot;.</p>
+<p><strong>Dlaczego CoT działa?</strong> Wygenerowane pośrednie kroki stają się częścią kontekstu następnych tokenów — pełnią rolę „roboczej pamięci&quot; modelu i umożliwiają mu korzystanie z wyników własnych wcześniejszych obliczeń.</p>
 <table>
 <thead>
 <tr>
-<th>Cecha</th>
-<th>GPT-4o</th>
-<th>Claude 3.5 Sonnet</th>
-<th>Llama 3 (70B)</th>
+<th>Wariant</th>
+<th>Opis</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><strong>Producent</strong></td>
-<td>OpenAI</td>
-<td>Anthropic</td>
-<td>Meta AI</td>
+<td><strong>Zero-shot CoT</strong></td>
+<td>Dodanie „Myśl krok po kroku&quot; do promptu</td>
 </tr>
 <tr>
-<td><strong>Okno kontekstowe</strong></td>
-<td>128 000 tokenów</td>
-<td>200 000 tokenów</td>
-<td>Do 131 072 tokenów</td>
+<td><strong>Few-shot CoT</strong></td>
+<td>Przykłady z widocznym tokiem rozumowania</td>
 </tr>
 <tr>
-<td><strong>Dostęp</strong></td>
-<td>API w chmurze</td>
-<td>API w chmurze</td>
-<td>Lokalne / własna chmura</td>
+<td><strong>Self-consistency</strong></td>
+<td>Wiele łańcuchów + wybór najczęstszej odpowiedzi</td>
 </tr>
 <tr>
-<td><strong>Prywatność danych</strong></td>
-<td>Wysyłane do OpenAI</td>
-<td>Wysyłane do Anthropic</td>
-<td>W pełni lokalna</td>
-</tr>
-<tr>
-<td><strong>Multimodalność</strong></td>
-<td>Tekst, obraz, dźwięk</td>
-<td>Tekst, obraz</td>
-<td>Tekst (warianty Vision)</td>
-</tr>
-<tr>
-<td><strong>Fine-tuning</strong></td>
-<td>Ograniczony przez API</td>
-<td>Niedostępny</td>
-<td>Pełny dostęp</td>
-</tr>
-<tr>
-<td><strong>Koszt użycia</strong></td>
-<td>Per token</td>
-<td>Per token</td>
-<td>Infrastruktura własna</td>
-</tr>
-<tr>
-<td><strong>Jakość kodu</strong></td>
-<td>Bardzo wysoka</td>
-<td>Bardzo wysoka</td>
-<td>Wysoka (70B+)</td>
+<td><strong>Tree of Thought</strong></td>
+<td>Eksploracja drzewa możliwych ścieżek rozwiązania</td>
 </tr>
 </tbody></table>
 
 </section>
 <section class="slide">
-<h2>Benchmarki — co mierzą i jak je czytać</h2>
+<h2>Few-shot Prompting i Role Prompting</h2>
+<p><strong>Few-shot prompting</strong> polega na dostarczeniu modelu kilku przykładów pary wejście–wyjście przed właściwym pytaniem. Uczy model oczekiwanego formatu, stylu i poziomu szczegółowości — bez żadnego dodatkowego trenowania.</p>
+<p>Zasady skutecznego few-shot:</p>
 <ul>
-<li><strong>MMLU</strong> — wiedza ogólna i rozumowanie w 57 dziedzinach; miernik „encyklopedyczności&quot; modelu</li>
-<li><strong>HumanEval / MBPP</strong> — rozwiązywanie zadań algorytmicznych; benchmark jakości generowania kodu</li>
-<li><strong>SWE-bench</strong> — realne bugi z GitHuba do naprawienia; najbardziej praktyczny benchmark dla AI developera</li>
-<li><strong>GPQA</strong> — pytania z fizyki, chemii i biologii na poziomie doktoratu; mierzy głębokie rozumowanie</li>
+<li>Przykłady powinny być <strong>reprezentatywne</strong> dla typowych przypadków, nie skrajnych</li>
+<li>Kolejność przykładów ma znaczenie — modele przykładają większą wagę do tych <strong>bliższych końcowi</strong> (<em>recency bias</em>)</li>
+<li>Używaj <strong>różnorodnych</strong> przykładów, aby zapobiec nadmiernemu dopasowaniu do jednego wzorca</li>
 </ul>
-<p>Benchmarki mogą wprowadzać w błąd przez <strong>data contamination</strong> (modele trenowane na zestawach testowych) oraz słabą przeliczalność wyników na konkretne zadania.</p>
-<p><strong>Rekomendacja:</strong> testuj model na własnym zestawie promptów reprezentatywnych dla projektu — godzina testów własnoręcznych daje więcej informacji niż dziesiątki artykułów porównawczych.</p>
+<p><strong>Role prompting</strong> — przypisanie modelowi konkretnej roli eksperckiej uruchamia specyficzny rejestr wiedzy i stylu. Model przewiduje tokeny pasujące do tej persony, bo w danych treningowych takie teksty cechowała wysoka jakość merytoryczna.</p>
 
 </section>
 <section class="slide">
-<h2>Strategia wyboru modelu — model routing</h2>
-<p>W praktyce wiele projektów korzysta z <strong>kombinacji modeli</strong> dopasowanych do zadania (<em>model routing</em>):</p>
-<ul>
-<li><strong>Szybkie, tanie zadania</strong> (klasyfikacja, ekstrakcja, formatowanie) → <code>gpt-4o-mini</code> lub mały model lokalny</li>
-<li><strong>Złożone rozumowanie i generowanie kodu</strong> → GPT-4o lub Claude 3.5 Sonnet</li>
-<li><strong>Dokumenty wrażliwe, dane regulowane</strong> → Llama 3 lokalnie</li>
-<li><strong>Fine-tuning do wąskiej domeny</strong> → otwarty model (Llama, Mistral) dotrenowany na własnych danych</li>
-</ul>
-<p>Decyzja to kompromis między <strong>jakością</strong>, <strong>kosztem</strong>, <strong>prywatnością</strong> i <strong>kontrolą</strong>. Świadomy AI developer potrafi uzasadnić ten wybór wobec klienta i zespołu.</p>
+<h2>Halucynacje — źródła i mechanizmy powstawania</h2>
+<p><strong>Halucynacje</strong> to przypadki, gdy model generuje treść brzmiącą wiarygodnie, ale faktycznie błędną — nieistniejące cytaty, zmyślone funkcje bibliotek, nieprawdziwe daty lub dane statystyczne.</p>
+<p>Skąd biorą się halucynacje:</p>
+<ol>
+<li><strong>Natura autoregresji</strong> — model zawsze wybiera „najbardziej prawdopodobny&quot; następny token, nawet gdy brakuje mu wiedzy na dany temat</li>
+<li><strong>Brak reprezentacji niepewności</strong> — baseline LLM nie potrafi powiedzieć „nie wiem&quot;; tej umiejętności uczy dopiero RLHF</li>
+<li><strong>Dziury w danych treningowych</strong> — model interpoluje wzorce z podobnych, lepiej reprezentowanych tematów</li>
+<li><strong>Pytania sugestywne</strong> — fałszywa przesłanka zawarta w pytaniu jest często potwierdzana zamiast zakwestionowana</li>
+</ol>
 
 </section>
 <section class="slide">
-<h2>Kluczowe wnioski — sekcja 1.2</h2>
+<h2>Technika Grounding — dostarczaj fakty w kontekście</h2>
+<p><strong>Grounding</strong> polega na dostarczeniu modelu dokumentów jako części kontekstu i nakazaniu mu odpowiadania wyłącznie na ich podstawie — zamiast pytania o fakty z pamięci modelu.</p>
+<pre><code>Na podstawie poniższego dokumentu odpowiedz na pytanie.
+Jeśli odpowiedzi nie ma w dokumencie, napisz &quot;Nie znaleziono w źródle&quot;.
+
+[DOKUMENT]
+...
+[KONIEC DOKUMENTU]
+
+Pytanie: ...
+</code></pre>
+<p>Jest to fundamentalna technika systemów RAG (Retrieval-Augmented Generation) — model wie tylko tyle, ile mu dostarczysz w kontekście, co radykalnie zmniejsza ryzyko halucynacji.</p>
+
+</section>
+<section class="slide">
+<h2>Techniki ograniczania halucynacji — przegląd</h2>
 <ul>
-<li>Nie istnieje jeden „najlepszy&quot; model — każdy ma inne mocne strony, a wybór zależy od wymagań projektu</li>
-<li>GPT-4o: niezawodność, multimodalność, dojrzały ekosystem; Claude 3.5 Sonnet: długi kontekst, precyzja instrukcji, jakość kodu</li>
-<li>Modele open-weight (Llama 3) zapewniają pełną prywatność i kontrolę, kosztem zarządzania własną infrastrukturą</li>
-<li>Produkcyjne systemy coraz częściej stosują routing modeli — różne modele do różnych zadań w zależności od kosztu i wymaganej jakości odpowiedzi</li>
+<li><strong>Known-unknown prompting</strong> — instruuj model: „Jeśli nie jesteś pewien, powiedz: »Zweryfikuj to w oficjalnej dokumentacji«&quot;</li>
+<li><strong>Weryfikacja przez model (self-check)</strong> — po uzyskaniu odpowiedzi wyślij osobne pytanie: „Czy Twoja odpowiedź zawiera twierdzenia, które mogą być nieprawdziwe?&quot;</li>
+<li><strong>Niska temperatura (0.0–0.3)</strong> — wymusza wybór przewidywalnych, bezpieczniejszych tokenów; stosuj w zastosowaniach faktograficznych</li>
+<li><strong>Strukturalny format JSON/XML</strong> — ścisły format wymusza precyzję i utrudnia „przemycanie&quot; halucynacji w płynnym tekście</li>
+</ul>
+<p>Połączenie <strong>groundingu</strong>, <strong>niskiej temperatury</strong> i <strong>wymuszonego formatu JSON</strong> to najskuteczniejsza trójka technik redukcji halucynacji w systemach produkcyjnych.</p>
+
+</section>
+<section class="slide">
+<h2>Meta-prompting i Prompt Chaining</h2>
+<p><strong>Meta-prompting</strong> — prosisz model o wygenerowanie lub ulepszenie promptu dla innego zadania. Model często lepiej zna własne ograniczenia niż deweloper i proponuje skuteczniejsze sformułowania.</p>
+<p><strong>Prompt chaining</strong> — podział złożonego zadania na sekwencję prostszych kroków, gdzie wyjście jednego promptu staje się wejściem kolejnego:</p>
+<ol>
+<li>Wyodrębnij kluczowe wymagania z opisu zadania</li>
+<li>Zaproponuj 3 architektury rozwiązania</li>
+<li>Oceń każdą architekturę pod kątem skalowalności i kosztu</li>
+<li>Wygeneruj kod dla najlepszej architektury</li>
+</ol>
+<p>Każdy krok jest prostszy i mniej podatny na błędy. Łańcuchowanie promptów z pętlą sprzężenia zwrotnego to fundament działania agentów AI.</p>
+
+</section>
+<section class="slide">
+<h2>Kluczowe wnioski — sekcja 1.3</h2>
+<ul>
+<li>Prompt engineering to dźwignia pozwalająca wyciągnąć z modelu znacznie więcej niż domyślne zachowanie sugeruje — bez zmian w architekturze</li>
+<li>System prompt to kontrakt z modelem; wersjonuj go jak kod i testuj negatywne przypadki</li>
+<li>CoT działa, bo pośrednie kroki rozumowania stają się częścią kontekstu i pozwalają modelowi „rozumować&quot; nad własnymi wynikami</li>
+<li>Halucynacje można ograniczać przez grounding, niską temperaturę i wymuszone formaty — ale nie da się ich całkowicie wyeliminować samym promptingiem</li>
+<li>Prompt chaining i meta-prompting umożliwiają rozwiązywanie złożonych problemów przez dekompozycję na prostsze, zarządzalne kroki</li>
 </ul>
 
 </section>
