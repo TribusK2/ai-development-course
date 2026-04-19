@@ -2,15 +2,14 @@
 description: "Write a section of a learning plan. Usage: /write-section"
 name: "write-section"
 argument-hint: "section-number"
-language: "pl"
-output-format: "markdown"
+agent: agent
 ---
 
 Przygotuj teorię oraz tematy zadań praktycznych dla sekcji planu nauki. Sekcje są ponumerowane w spisie treści, np. 1.1, 2.3 itd. Odpowiedz tylko na temat sekcji wskazanej w argumencie; nie pisz o innych sekcjach.
 
 ## Spis treści
 
-Przeczytaj spis treści zapisany w [spis_tresci](../../spis_tresci.txt).
+Przeczytaj spis treści zapisany w [contents](../../contents.txt).
 
 Oczekiwany format spisu treści: każda linia zawiera numer sekcji i tytuł, np. `2.1 — Nazwa sekcji` lub `2.1. Nazwa sekcji`. Jeśli format jest inny, spróbuj rozpoznać numer sekcji na początku linii.
 
@@ -25,7 +24,7 @@ Oczekiwany format spisu treści: każda linia zawiera numer sekcji i tytuł, np.
 ## Zadanie
 
 - Utwórz nowy plik markdown w folderze `sections`, o nazwie odpowiadającej numerowi sekcji, np. `2.1.md`. Jeśli folder `sections` nie istnieje — utwórz go.
-- Upewnij się, że nazwa pliku jest bezpieczna: zamień niedozwolone znaki (np. `/`, `\\`, `:`, `*`, `?`) na podkreślenia.
+
 - Napisz w języku polskim teorię dla sekcji wskazanej w argumencie.
 - Preferowana długość teorii: 4-7 podpunktów tematycznych, każdy po 200–400 słów (około 3–6 akapitów). Teoria powinna być zwięzła, ale kompletna i obejmować wszystkie kluczowe pojęcia i umiejętności związane z tą sekcją.
 - Tam gdzie to potrzebne, przedstaw przykłady lub analogie.
